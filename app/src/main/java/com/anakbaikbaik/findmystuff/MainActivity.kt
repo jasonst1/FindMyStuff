@@ -7,20 +7,32 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.anakbaikbaik.findmystuff.ui.theme.White
+import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
+import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
+import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -68,7 +80,7 @@ data class Message(val author: String, val body: String)
 @Composable
 fun Conversation(messages: List<Message>) {
     LazyColumn (
-        modifier = Modifier.padding(top = 70.dp)
+        modifier = Modifier.padding(top = 64.dp)
     ) {
         items(messages) { message ->
             MessageCard(message)
@@ -78,13 +90,18 @@ fun Conversation(messages: List<Message>) {
 
 @Composable
 fun topBar() {
-    TopAppBar(title = {
-        Text(
-            text = "FindMyStuff",
-            style = MaterialTheme.typography.titleSmall,
-            textAlign = TextAlign.Center
-        )
-    })
+    TopAppBar(
+        title = {
+            Text(
+                stringResource(id = R.string.app_name),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = White,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = warnaUMN)
+    )
 }
 
 @Composable
@@ -96,50 +113,69 @@ fun MessageCard(message: Message) {
             .border(1.dp, Color.Black)
     ) {
         Row (
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp),
+            horizontalArrangement = Arrangement.Center
         ) {
             Column (
-                modifier = Modifier.padding(10.dp),
-                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .background(color = warnaUMN)
             ) {
                 Image(
                     painter = painterResource(R.drawable.monyet),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(70.dp)
-                        .clip(CircleShape)
-                        .border(1.5.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                        .size(400.dp),
+                    contentScale = ContentScale.Crop
                 )
             }
-
+        }
+        Row {
             Column (
-                modifier = Modifier.padding(8.dp),
-                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(15.dp),
             ) {
-                Column (
-                    modifier = Modifier.padding(8.dp)
-                ){
-                    Text(
-                        text = message.author,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                Text(
+                    text = message.author,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color.Black,
+                    fontSize = 20.sp
+                )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-                    Text(
-                        text = message.body,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                Text(
+                    text = message.body,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 15.sp
+                )
+            }
+        }
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Column {
+                PrimaryTextButton(
+                    text = stringResource(id = R.string.editButton),
+                ) {
+                    // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
+//                onButtonClick()
+                }
+            }
+            Column {
+                RedTextButton(
+                    text = stringResource(id = R.string.deleteButton)
+                ) {
+                    // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
+//                onButtonClick()
                 }
             }
         }
     }
 }
 
-@Preview
-@Composable
-fun ConversationPreview() {
-    Conversation(SampleData.conversationSample)
-}
+//@Preview
+//@Composable
+//fun ConversationPreview() {
+//    Conversation(SampleData.conversationSample)
+//}
