@@ -1,6 +1,5 @@
 package com.anakbaikbaik.findmystuff.ui.theme
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
@@ -45,6 +44,16 @@ fun PrimaryTextButton(text: String, onClick: () -> Unit) {
         onClick = onClick
     )
 }
+
+@Composable
+fun GreenTextButton(text: String, onClick: () -> Unit) {
+    acceptButton(
+        text = text,
+        textColor = Color.White,
+        onClick = onClick
+    )
+}
+
 @Composable
 fun RedTextButton(text: String, onClick: () -> Unit) {
     delButton(
@@ -82,6 +91,24 @@ fun delButton(text: String, textColor: Color, onClick: () -> Unit) {
         colors = ButtonDefaults
             .buttonColors(
                 containerColor = Merah,
+                contentColor = textColor
+            )
+    ) {
+        Text(text = text, style =
+        MaterialTheme.typography.labelMedium)
+    }
+}
+
+@Composable
+fun acceptButton(text: String, textColor: Color, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .padding(8.dp)
+            .width(100.dp),
+        colors = ButtonDefaults
+            .buttonColors(
+                containerColor = Hijau,
                 contentColor = textColor
             )
     ) {

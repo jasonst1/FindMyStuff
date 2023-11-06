@@ -3,4 +3,6 @@
     <string name="editButton">Edit</string>
     <string name="deleteButton">Delete</string>
     <string name="title_activity_edit">EditActivity</string>
+    <string name="cancelButton">Cancel</string>
+    <string name="approveButton">Approve</string>
 </resources>

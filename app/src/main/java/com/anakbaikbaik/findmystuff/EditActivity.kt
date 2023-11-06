@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.anakbaikbaik.findmystuff.ui.theme.FindMyStuffTheme
+import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 
@@ -90,16 +91,16 @@ fun editColumn(){
             horizontalArrangement = Arrangement.Center
         ) {
             Column {
-                PrimaryTextButton(
-                    text = stringResource(id = R.string.editButton),
+                RedTextButton(
+                    text = stringResource(id = R.string.cancelButton),
                 ) {
                     // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
 //                onButtonClick()
                 }
             }
             Column {
-                RedTextButton(
-                    text = stringResource(id = R.string.deleteButton)
+                GreenTextButton(
+                    text = stringResource(id = R.string.approveButton)
                 ) {
                     // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
 //                onButtonClick()
