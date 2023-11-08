@@ -3,6 +3,7 @@
 package com.anakbaikbaik.findmystuff
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -25,12 +26,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import com.anakbaikbaik.findmystuff.ui.theme.White
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
@@ -43,21 +46,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val db = Firebase.firestore
-        val user = hashMapOf(
-            "first" to "Ada",
-            "last" to "Lovelace",
-            "born" to 1815,
-        )
-
-// Add a new document with a generated ID
-        db.collection("users")
-            .add(user)
-            .addOnSuccessListener { documentReference ->
-                Log.d("FIREBASE", "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w("FIREBASE", "Error adding document", e)
-            }
+//        val user = hashMapOf(
+//            "first" to "Ada",
+//            "last" to "Lovelace",
+//            "born" to 1815,
+//        )
+//
+//// Add a new document with a generated ID
+//        db.collection("users")
+//            .add(user)
+//            .addOnSuccessListener { documentReference ->
+//                Log.d("FIREBASE", "DocumentSnapshot added with ID: ${documentReference.id}")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.w("FIREBASE", "Error adding document", e)
+//            }
         setContent {
             Surface(
                 modifier = Modifier.fillMaxSize(),
@@ -139,6 +142,8 @@ fun topBar() {
 }
 @Composable
 fun MessageCard(message: Message) {
+    val context = LocalContext.current
+    
     Column (
         modifier = Modifier
             .padding(8.dp)
@@ -193,10 +198,12 @@ fun MessageCard(message: Message) {
             Column {
                 PrimaryTextButton(
                     text = stringResource(id = R.string.editButton),
-                ) {
-                    // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
-//                onButtonClick()
-                }
+                    onClick = {
+                        val intent = Intent(context, EditActivity::class.java)
+                        context.startActivity(intent)
+                        Log.d("TESTTEST", "I HAVE CLICKED YOU")
+                    }
+                )
             }
             Column {
                 RedTextButton(
