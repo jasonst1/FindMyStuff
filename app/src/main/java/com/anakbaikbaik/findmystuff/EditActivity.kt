@@ -63,7 +63,10 @@ fun editColumn(){
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        var text by remember { mutableStateOf("") }
+        var nama by remember { mutableStateOf("") }
+        var lokasi by remember { mutableStateOf("") }
+        var deskripsi by remember { mutableStateOf("") }
+
         Image(
             painter = painterResource(R.drawable.monyet),
             contentDescription = null,
@@ -75,24 +78,24 @@ fun editColumn(){
             text = "Name"
         )
         OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
+            value = nama,
+            onValueChange = { nama = it },
             label = { Text("Label") }
         )
         Text(
             text = "Lokasi"
         )
         OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
+            value = lokasi,
+            onValueChange = { lokasi = it },
             label = { Text("Label") }
         )
         Text(
             text = "Deskripsi"
         )
         OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
+            value = deskripsi,
+            onValueChange = { deskripsi = it },
             label = { Text("Label") }
         )
         Row (
