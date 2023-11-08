@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "264797892652",
+    "project_id": "findmystuff-f2dcb",
+    "storage_bucket": "findmystuff-f2dcb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264797892652:android:716731c2e6c5dd83da2189",
+        "android_client_info": {
+          "package_name": "com.anakbaikbaik.findmystuff"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNNbjqEWFdtYPvxCUd8AsttXF57VVJvJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

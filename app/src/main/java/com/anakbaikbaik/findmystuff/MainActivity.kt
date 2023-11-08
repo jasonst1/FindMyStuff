@@ -4,6 +4,7 @@ package com.anakbaikbaik.findmystuff
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -34,11 +35,29 @@ import com.anakbaikbaik.findmystuff.ui.theme.White
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val db = Firebase.firestore
+        val user = hashMapOf(
+            "first" to "Ada",
+            "last" to "Lovelace",
+            "born" to 1815,
+        )
+
+// Add a new document with a generated ID
+        db.collection("users")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d("FIREBASE", "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w("FIREBASE", "Error adding document", e)
+            }
         setContent {
             Surface(
                 modifier = Modifier.fillMaxSize(),
