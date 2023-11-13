@@ -1,5 +1,6 @@
 package com.anakbaikbaik.findmystuff.Screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,16 +13,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -33,11 +38,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.anakbaikbaik.findmystuff.Data.Resource
 import com.anakbaikbaik.findmystuff.Navigation.Screen
+import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
 
 @Composable
-fun LandingScreen(navController: NavController){
+fun LandingScreen(navController: NavController, viewModel: AuthViewModel?){
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -46,21 +54,25 @@ fun LandingScreen(navController: NavController){
             topBar = { topBar() },
             content = {it
                 // Add padding to the main content area
-                LandingArea(navController = navController)
+                LandingArea(viewModel = viewModel, navController = navController)
             }
         )
     }
 }
 
 @Composable
-fun LandingArea(navController: NavController){
+fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
+        val authResource = viewModel?.loginFlow?.collectAsState()
+
         Box(modifier = Modifier.fillMaxSize()) {
             ClickableText(
                 text = AnnotatedString("Sign up"),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(20.dp),
-                onClick = { },
+                onClick = {
+                    navController.navigate(Screen.SignUpScreen.route)
+                },
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = FontFamily.Default,
@@ -74,7 +86,7 @@ fun LandingArea(navController: NavController){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            val username = remember { mutableStateOf(TextFieldValue()) }
+            val email = remember { mutableStateOf(TextFieldValue()) }
             val password = remember { mutableStateOf(TextFieldValue()) }
 
             Text(
@@ -84,9 +96,9 @@ fun LandingArea(navController: NavController){
 
             Spacer(modifier = Modifier.height(20.dp))
             TextField(
-                label = { Text(text = "Username") },
-                value = username.value,
-                onValueChange = { username.value = it })
+                label = { Text(text = "email") },
+                value = email.value,
+                onValueChange = { email.value = it })
 
             Spacer(modifier = Modifier.height(20.dp))
             TextField(
@@ -99,7 +111,9 @@ fun LandingArea(navController: NavController){
             Spacer(modifier = Modifier.height(20.dp))
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                 Button(
-                    onClick = { },
+                    onClick = {
+                        viewModel?.loginUser(email.value.text, password.value.text)
+                    },
                     shape = RoundedCornerShape(50.dp),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -118,5 +132,26 @@ fun LandingArea(navController: NavController){
                     fontFamily = FontFamily.Default
                 )
             )
+
+            authResource?.value?.let{
+                when(it){
+                    is Resource.Failure -> {
+                        val context = LocalContext.current
+                        Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                    }
+                    Resource.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    is Resource.Success -> {
+                        LaunchedEffect(Unit) {
+                            navController.navigate(Screen.HomeScreen.route) {
+                                popUpTo(Screen.HomeScreen.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 }

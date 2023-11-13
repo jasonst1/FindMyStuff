@@ -1,5 +1,6 @@
 package com.anakbaikbaik.findmystuff.Screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,22 +34,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
+import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(viewModel: AuthViewModel?, navController: NavController) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
+        Log.d("HomeScreen", viewModel.toString())
         Scaffold(
             topBar = { topBar() },
             content = {it
                 // Add padding to the main content area
-                Conversation(SampleData.conversationSample, navController)
+                Conversation(viewModel, SampleData.conversationSample, navController)
             },
             floatingActionButton = {
                 FloatingActionButton(
@@ -91,12 +95,22 @@ object SampleData {
 data class Message(val author: String, val body: String)
 
 @Composable
-fun Conversation(messages: List<Message>, navController: NavController) {
+fun Conversation(viewModel: AuthViewModel?, messages: List<Message>, navController: NavController) {
     LazyColumn (
         modifier = Modifier.padding(top = 64.dp)
     ) {
         items(messages) { message ->
             MessageCard(message, navController)
+            Button(
+                onClick = {
+                    viewModel?.logout()
+                    navController.navigate(Screen.LandingScreen.route) {
+                        popUpTo(Screen.LandingScreen.route) { inclusive = true }
+                    }
+                }
+            ){
+                Text(text = "Logout")
+            }
         }
     }
 }
@@ -104,6 +118,7 @@ fun Conversation(messages: List<Message>, navController: NavController) {
 @Composable
 fun MessageCard(message: Message, navController: NavController) {
     val context = LocalContext.current
+
 
     Column (
         modifier = Modifier
