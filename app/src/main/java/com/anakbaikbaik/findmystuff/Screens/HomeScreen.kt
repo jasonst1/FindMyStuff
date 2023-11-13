@@ -1,93 +1,70 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+package com.anakbaikbaik.findmystuff.Screens
 
-package com.anakbaikbaik.findmystuff
-
-import android.annotation.SuppressLint
-import android.content.Intent
-import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.UiComposable
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
-import com.anakbaikbaik.findmystuff.ui.theme.White
-import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
+import androidx.navigation.NavController
+import com.anakbaikbaik.findmystuff.Navigation.Screen
+import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.anakbaikbaik.findmystuff.ui.theme.topBar
+import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 
-class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val db = Firebase.firestore
-//        val user = hashMapOf(
-//            "first" to "Ada",
-//            "last" to "Lovelace",
-//            "born" to 1815,
-//        )
-//
-//// Add a new document with a generated ID
-//        db.collection("users")
-//            .add(user)
-//            .addOnSuccessListener { documentReference ->
-//                Log.d("FIREBASE", "DocumentSnapshot added with ID: ${documentReference.id}")
-//            }
-//            .addOnFailureListener { e ->
-//                Log.w("FIREBASE", "Error adding document", e)
-//            }
-        setContent {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                Scaffold(
-                    topBar = { topBar() },
-                    content = {
-                        Conversation(SampleData.conversationSample)
-                    },
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { /* Handle FAB click here */ },
-                            modifier = Modifier // Adjust alignment as needed
-                                .padding(16.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.add),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(40.dp)
-                            )
-                        }
-                    }
-                )
+@Composable
+fun HomeScreen(navController: NavController) {
+    var padding = 16.dp
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Scaffold(
+            topBar = { topBar() },
+            content = {it
+                // Add padding to the main content area
+                Conversation(SampleData.conversationSample, navController)
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { /* Handle FAB click here */ },
+                    modifier = Modifier // Adjust alignment as needed
+                        .padding(16.dp)
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.add),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(40.dp)
+                    )
+                }
             }
-        }
+        )
     }
 }
 
@@ -115,35 +92,20 @@ object SampleData {
 data class Message(val author: String, val body: String)
 
 @Composable
-fun Conversation(messages: List<Message>) {
+fun Conversation(messages: List<Message>, navController: NavController) {
     LazyColumn (
         modifier = Modifier.padding(top = 64.dp)
     ) {
         items(messages) { message ->
-            MessageCard(message)
+            MessageCard(message, navController)
         }
     }
 }
 
 @Composable
-fun topBar() {
-    TopAppBar(
-        title = {
-            Text(
-                stringResource(id = R.string.app_name),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = White,
-                fontWeight = FontWeight.Bold
-            )
-        },
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = warnaUMN)
-    )
-}
-@Composable
-fun MessageCard(message: Message) {
+fun MessageCard(message: Message, navController: NavController) {
     val context = LocalContext.current
-    
+
     Column (
         modifier = Modifier
             .padding(8.dp)
@@ -199,9 +161,7 @@ fun MessageCard(message: Message) {
                 PrimaryTextButton(
                     text = stringResource(id = R.string.editButton),
                     onClick = {
-                        val intent = Intent(context, EditActivity::class.java)
-                        context.startActivity(intent)
-                        Log.d("TESTTEST", "I HAVE CLICKED YOU")
+                        navController.navigate(Screen.EditScreen.route)
                     }
                 )
             }
@@ -216,9 +176,3 @@ fun MessageCard(message: Message) {
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun ConversationPreview() {
-//    Conversation(SampleData.conversationSample)
-//}

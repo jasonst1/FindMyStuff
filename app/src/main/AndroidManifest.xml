@@ -18,7 +18,7 @@
             android:label="@string/title_activity_edit"
             android:theme="@style/Theme.FindMyStuff" />
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivity.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.FindMyStuff">

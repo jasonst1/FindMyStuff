@@ -4,12 +4,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.anakbaikbaik.findmystuff.R
 
 //UI Element for displaying a title
 @Composable
@@ -115,4 +122,21 @@ fun acceptButton(text: String, textColor: Color, onClick: () -> Unit) {
         Text(text = text, style =
         MaterialTheme.typography.labelMedium)
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun topBar() {
+    TopAppBar(
+        title = {
+            Text(
+                stringResource(id = R.string.app_name),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = White,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = warnaUMN)
+    )
 }
