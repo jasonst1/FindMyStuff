@@ -3,8 +3,10 @@
 package com.anakbaikbaik.findmystuff
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -13,8 +15,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
@@ -27,7 +33,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -209,6 +220,72 @@ fun MessageCard(message: Message) {
         }
     }
 }
+
+@Composable
+fun loginUi(context: Context) {
+    var email by remember {
+        mutableStateOf("")
+    }
+    var password by remember {
+        mutableStateOf("")
+    }
+    Column {
+        Text(
+            text = "Login Admin",
+            fontFamily = FontFamily.Monospace,
+            textAlign = TextAlign.Center,
+            fontSize = 48.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Red,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 20.dp)
+        )
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Enter your Email") },
+            leadingIcon = {
+                Icon(Icons.Default.Person, contentDescription = "person")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp, top = 10.dp)
+        )
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Enter your Password") },
+            leadingIcon = {
+                Icon(Icons.Default.Info, contentDescription = "password")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp, top = 10.dp),
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+        )
+        OutlinedButton(onClick = { logged(email, password, context) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp, top = 10.dp))
+        {
+
+            Text(text = "Login",
+                textAlign = TextAlign.Center)
+        }
+    }
+}
+
+fun logged(email: String, password: String, context: Context): () -> Unit {
+    if (email == "admin" && password == "admin123") {
+        Toast.makeText(context, "Logged In Successfully", Toast.LENGTH_SHORT).show()
+    } else {
+        Toast.makeText(context, "Logged In Failed", Toast.LENGTH_SHORT).show()
+    }
+    return TODO("Provide the return value")
+}
+
 
 //@Preview
 //@Composable
