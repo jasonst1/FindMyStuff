@@ -8,9 +8,12 @@ import com.anakbaikbaik.findmystuff.Screens.AddScreen
 import com.anakbaikbaik.findmystuff.Screens.EditScreen
 import com.anakbaikbaik.findmystuff.Screens.HomeScreen
 import com.anakbaikbaik.findmystuff.Screens.LandingScreen
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun Navigation() {
+//    val db = Firebase.firestore
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.HomeScreen.route){
         composable(route = Screen.LandingScreen.route){
