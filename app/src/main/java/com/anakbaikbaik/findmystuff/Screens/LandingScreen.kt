@@ -62,7 +62,7 @@ fun LandingScreen(navController: NavController, viewModel: AuthViewModel?){
 
 @Composable
 fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
-        val loginFlow = viewModel?.loginFlow?.collectAsState()
+        val authResource = viewModel?.loginFlow?.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
             ClickableText(
@@ -112,7 +112,7 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                 Button(
                     onClick = {
-                        viewModel?.login(email.value.text, password.value.text)
+                        viewModel?.loginUser(email.value.text, password.value.text)
                     },
                     shape = RoundedCornerShape(50.dp),
                     modifier = Modifier
@@ -133,7 +133,7 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
                 )
             )
 
-            loginFlow?.value?.let{
+            authResource?.value?.let{
                 when(it){
                     is Resource.Failure -> {
                         val context = LocalContext.current

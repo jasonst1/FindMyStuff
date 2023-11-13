@@ -72,7 +72,7 @@ fun SignUpArea(viewModel: AuthViewModel?, navController: NavController){
         val password = remember { mutableStateOf(TextFieldValue()) }
         val username = remember { mutableStateOf(TextFieldValue()) }
 
-        val signupFlow = viewModel?.signupFlow?.collectAsState()
+        val authResource = viewModel?.signupFlow?.collectAsState()
 
         Text(
             text = "Sign Up",
@@ -103,7 +103,7 @@ fun SignUpArea(viewModel: AuthViewModel?, navController: NavController){
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
                 onClick = {
-                          viewModel?.signUp(username.value.text, email.value.text, password.value.text)
+                    viewModel?.signupUser(username.value.text, email.value.text, password.value.text)
                 },
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
@@ -113,7 +113,7 @@ fun SignUpArea(viewModel: AuthViewModel?, navController: NavController){
                 Text(text = "Sign Up")
             }
         }
-        signupFlow?.value?.let{
+        authResource?.value?.let{
             when(it){
                 is Resource.Failure -> {
                     val context = LocalContext.current

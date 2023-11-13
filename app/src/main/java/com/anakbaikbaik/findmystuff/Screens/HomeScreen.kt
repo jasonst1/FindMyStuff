@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -50,7 +51,7 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController) {
             topBar = { topBar() },
             content = {it
                 // Add padding to the main content area
-                Conversation(SampleData.conversationSample, navController)
+                Conversation(viewModel, SampleData.conversationSample, navController)
             },
             floatingActionButton = {
                 FloatingActionButton(
@@ -94,12 +95,22 @@ object SampleData {
 data class Message(val author: String, val body: String)
 
 @Composable
-fun Conversation(messages: List<Message>, navController: NavController) {
+fun Conversation(viewModel: AuthViewModel?, messages: List<Message>, navController: NavController) {
     LazyColumn (
         modifier = Modifier.padding(top = 64.dp)
     ) {
         items(messages) { message ->
             MessageCard(message, navController)
+            Button(
+                onClick = {
+                    viewModel?.logout()
+                    navController.navigate(Screen.LandingScreen.route) {
+                        popUpTo(Screen.LandingScreen.route) { inclusive = true }
+                    }
+                }
+            ){
+                Text(text = "Logout")
+            }
         }
     }
 }
@@ -107,6 +118,7 @@ fun Conversation(messages: List<Message>, navController: NavController) {
 @Composable
 fun MessageCard(message: Message, navController: NavController) {
     val context = LocalContext.current
+
 
     Column (
         modifier = Modifier
