@@ -51,7 +51,7 @@ fun HomeScreen(navController: NavController) {
             },
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { /* Handle FAB click here */ },
+                    onClick = {navController.navigate(Screen.AddScreen.route)},
                     modifier = Modifier // Adjust alignment as needed
                         .padding(16.dp)
                 ) {
