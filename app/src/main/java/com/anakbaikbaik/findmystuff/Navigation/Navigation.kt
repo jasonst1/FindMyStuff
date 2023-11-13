@@ -28,5 +28,8 @@ fun Navigation() {
         composable(route = Screen.AddScreen.route) {
             AddScreen(navController = navController)
         }
+        composable(route = Screen.SignUpScreen.route){
+//            SignUpScreen(navController = navController)
+        }
     }
 }

@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
 
@@ -74,7 +75,7 @@ fun LandingArea(navController: NavController){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            val username = remember { mutableStateOf(TextFieldValue()) }
+            val email = remember { mutableStateOf(TextFieldValue()) }
             val password = remember { mutableStateOf(TextFieldValue()) }
 
             Text(
@@ -84,9 +85,9 @@ fun LandingArea(navController: NavController){
 
             Spacer(modifier = Modifier.height(20.dp))
             TextField(
-                label = { Text(text = "Username") },
-                value = username.value,
-                onValueChange = { username.value = it })
+                label = { Text(text = "email") },
+                value = email.value,
+                onValueChange = { email.value = it })
 
             Spacer(modifier = Modifier.height(20.dp))
             TextField(
