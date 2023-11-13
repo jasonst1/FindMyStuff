@@ -1,5 +1,6 @@
 package com.anakbaikbaik.findmystuff.Screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,17 +33,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
+import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(viewModel: AuthViewModel?, navController: NavController) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
+        Log.d("HomeScreen", viewModel.toString())
         Scaffold(
             topBar = { topBar() },
             content = {it
