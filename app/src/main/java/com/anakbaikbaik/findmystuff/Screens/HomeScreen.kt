@@ -39,7 +39,6 @@ import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    var padding = 16.dp
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background

@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,9 +29,27 @@ import androidx.navigation.NavController
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
+import com.anakbaikbaik.findmystuff.ui.theme.topBar
+
 
 @Composable
 fun EditScreen(navController: NavController){
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Scaffold(
+            topBar = { topBar() },
+            content = {it
+                // Add padding to the main content area
+                EditArea(navController)
+            }
+        )
+    }
+}
+
+@Composable
+fun EditArea(navController: NavController){
     Column(
         modifier = Modifier
             .fillMaxSize()
