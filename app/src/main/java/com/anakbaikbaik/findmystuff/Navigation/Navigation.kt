@@ -8,25 +8,31 @@ import com.anakbaikbaik.findmystuff.Screens.AddScreen
 import com.anakbaikbaik.findmystuff.Screens.EditScreen
 import com.anakbaikbaik.findmystuff.Screens.HomeScreen
 import com.anakbaikbaik.findmystuff.Screens.LandingScreen
+import com.anakbaikbaik.findmystuff.Screens.SignUpScreen
+import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 @Composable
-fun Navigation() {
-//    val db = Firebase.firestore
+fun Navigation(
+    viewModel: AuthViewModel
+) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.HomeScreen.route){
+    NavHost(navController = navController, startDestination = Screen.LandingScreen.route){
         composable(route = Screen.LandingScreen.route){
-            LandingScreen(navController = navController)
+            LandingScreen(viewModel = viewModel, navController = navController)
         }
         composable(route = Screen.HomeScreen.route){
-            HomeScreen(navController = navController)
+            HomeScreen(viewModel = viewModel, navController = navController)
         }
         composable(route = Screen.EditScreen.route){
              EditScreen(navController = navController)
         }
         composable(route = Screen.AddScreen.route) {
             AddScreen(navController = navController)
+        }
+        composable(route = Screen.SignUpScreen.route){
+            SignUpScreen(viewModel = viewModel, navController = navController)
         }
     }
 }
