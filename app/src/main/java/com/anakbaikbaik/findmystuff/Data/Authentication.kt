@@ -1,6 +1,7 @@
 package com.anakbaikbaik.findmystuff.Data
 
 import android.util.Log
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
@@ -36,18 +37,11 @@ class Authentication @Inject constructor(
         }
     }
 
-    override suspend fun forgetPassword(email: String): Resource<FirebaseUser> {
+    override suspend fun forgetPassword(email: String): Resource<Void> {
         return try {
-            // Send a password reset email
             val result = firebaseAuth.sendPasswordResetEmail(email).await()
-            // Return a success resource
-            Resource.Success(currentUser!!)
-        } catch (e: FirebaseAuthInvalidUserException) {
-            // Handle the case where the user does not exist
-            e.printStackTrace()
-            Resource.Failure(e)
+            Resource.Success(result)
         } catch (e: Exception) {
-            // Handle other exceptions
             e.printStackTrace()
             Resource.Failure(e)
         }

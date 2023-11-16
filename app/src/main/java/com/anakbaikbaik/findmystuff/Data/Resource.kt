@@ -1,5 +1,6 @@
 package com.anakbaikbaik.findmystuff.Data
 
+import com.google.android.gms.tasks.Task
 import java.lang.Exception
 
 sealed class Resource<out R> {
