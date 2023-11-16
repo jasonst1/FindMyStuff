@@ -47,6 +47,7 @@ import com.anakbaikbaik.findmystuff.ui.theme.topBar
 
 @Composable
 fun LandingScreen(navController: NavController, viewModel: AuthViewModel?){
+    Log.d("ForgetPasswordDebug", "LandingScreen")
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background

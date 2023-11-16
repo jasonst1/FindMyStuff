@@ -51,15 +51,15 @@ class AuthViewModel @Inject constructor(
         _resetPasswordFlow.value = Resource.Loading
         val result = repository.forgetPassword(email)
         _resetPasswordFlow.value = result
-//        if(result is Resource.Success){
-//            _resetPasswordFlow.value = null
-//        }
+    }
+
+    fun resetPasswordFlowNull() {
+        _resetPasswordFlow.value = null
     }
 
     fun logout() {
         repository.logout()
         _loginFlow.value = null
         _signupFlow.value = null
-        _resetPasswordFlow.value = null
     }
 }

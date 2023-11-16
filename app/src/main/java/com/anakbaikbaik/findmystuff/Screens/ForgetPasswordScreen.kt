@@ -40,6 +40,7 @@ import com.anakbaikbaik.findmystuff.ui.theme.topBar
 
 @Composable
 fun ForgetPasswordScreen(navController: NavController, viewModel: AuthViewModel?){
+    Log.d("ForgetPasswordDebug", "ForgetPasswordScreen")
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -103,6 +104,7 @@ fun ForgetPasswordArea(viewModel: AuthViewModel?, navController: NavController){
                 is Resource.Success -> {
                     LaunchedEffect(Unit) {
                         navController.navigate(Screen.LandingScreen.route) {
+                            viewModel.resetPasswordFlowNull()
                             popUpTo(Screen.LandingScreen.route) {
                                 inclusive = true
                             }
