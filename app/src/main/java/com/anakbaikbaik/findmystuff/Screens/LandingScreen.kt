@@ -126,7 +126,9 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
             Spacer(modifier = Modifier.height(20.dp))
             ClickableText(
                 text = AnnotatedString("Forgot password?"),
-                onClick = { },
+                onClick = {
+                    navController.navigate(Screen.ForgetPasswordScreen.route)
+                },
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = FontFamily.Default

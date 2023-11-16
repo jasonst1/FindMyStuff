@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.anakbaikbaik.findmystuff.Screens.AddScreen
 import com.anakbaikbaik.findmystuff.Screens.EditScreen
+import com.anakbaikbaik.findmystuff.Screens.ForgetPasswordScreen
 import com.anakbaikbaik.findmystuff.Screens.HomeScreen
 import com.anakbaikbaik.findmystuff.Screens.LandingScreen
 import com.anakbaikbaik.findmystuff.Screens.SignUpScreen
@@ -33,6 +34,9 @@ fun Navigation(
         }
         composable(route = Screen.SignUpScreen.route){
             SignUpScreen(viewModel = viewModel, navController = navController)
+        }
+        composable(route = Screen.ForgetPasswordScreen.route){
+            ForgetPasswordScreen(viewModel = viewModel, navController = navController)
         }
     }
 }
