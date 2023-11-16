@@ -37,13 +37,22 @@ class Authentication @Inject constructor(
         }
     }
 
-    override suspend fun forgetPassword(email: String): Resource<Void> {
+    override suspend fun forgetPassword(email: String): Boolean {
         return try {
-            val result = firebaseAuth.sendPasswordResetEmail(email).await()
-            Resource.Success(result)
-        } catch (e: Exception) {
+            // Use await() to wait for the completion of sendPasswordResetEmail
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            Log.d("AUTHENTICATIONCONTROLLER","SUCCESS")
+            true // Password reset successful
+        } catch (e: FirebaseAuthInvalidUserException) {
+            // Handle the case where the user does not exist
             e.printStackTrace()
-            Resource.Failure(e)
+            Log.d("AUTHENTICATIONCONTROLLER","FAIL 1")
+            false // Password reset failed
+        } catch (e: Exception) {
+            // Handle other exceptions
+            e.printStackTrace()
+            Log.d("AUTHENTICATIONCONTROLLER","FAIL 2")
+            false // Password reset failed
         }
     }
 

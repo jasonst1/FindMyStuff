@@ -22,8 +22,8 @@ class AuthViewModel @Inject constructor(
     private val _signupFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val signupFlow: StateFlow<Resource<FirebaseUser>?> = _signupFlow
 
-    private val _forgetpasswordFlow = MutableStateFlow<Resource<Void>?>(null)
-    val forgetpasswordFlow: StateFlow<Resource<Void>?> = _forgetpasswordFlow
+    private val _resetPasswordFlow = MutableStateFlow<Resource<Boolean>?>(null)
+    val resetPasswordFlow: StateFlow<Resource<Boolean>?> = _resetPasswordFlow
 
     val currentUser: FirebaseUser?
         get() = repository.currentUser
@@ -47,15 +47,22 @@ class AuthViewModel @Inject constructor(
     }
 
     fun forgetPassword(email: String) = viewModelScope.launch {
-        _forgetpasswordFlow.value = Resource.Loading
-        val result = repository.forgetPassword(email)
-        _forgetpasswordFlow.value = result
+        _resetPasswordFlow.value = Resource.Loading
+        try {
+            val result = repository.forgetPassword(email)
+            _resetPasswordFlow.value = Resource.Success(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _resetPasswordFlow.value = Resource.Failure(e)
+        }finally {
+            _resetPasswordFlow.value = null
+        }
     }
 
     fun logout() {
         repository.logout()
         _loginFlow.value = null
         _signupFlow.value = null
-        _forgetpasswordFlow.value = null
+        _resetPasswordFlow.value = null
     }
 }

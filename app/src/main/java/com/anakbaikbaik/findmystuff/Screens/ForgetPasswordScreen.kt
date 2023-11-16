@@ -1,5 +1,6 @@
 package com.anakbaikbaik.findmystuff.Screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,7 +64,7 @@ fun ForgetPasswordArea(viewModel: AuthViewModel?, navController: NavController){
 
         val email = remember { mutableStateOf(TextFieldValue()) }
 
-        val authResource = viewModel?.forgetpasswordFlow?.collectAsState()
+        val authResource = viewModel?.resetPasswordFlow?.collectAsState()
 
         Text(
             text = "Forget Password",
