@@ -1,5 +1,6 @@
 package com.anakbaikbaik.findmystuff.Screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,6 +47,7 @@ import com.anakbaikbaik.findmystuff.ui.theme.topBar
 
 @Composable
 fun LandingScreen(navController: NavController, viewModel: AuthViewModel?){
+    Log.d("ForgetPasswordDebug", "LandingScreen")
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -126,7 +128,9 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
             Spacer(modifier = Modifier.height(20.dp))
             ClickableText(
                 text = AnnotatedString("Forgot password?"),
-                onClick = { },
+                onClick = {
+                    navController.navigate(Screen.ForgetPasswordScreen.route)
+                },
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = FontFamily.Default

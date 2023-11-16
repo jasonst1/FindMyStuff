@@ -1,5 +1,6 @@
 package com.anakbaikbaik.findmystuff.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anakbaikbaik.findmystuff.Data.AuthRepository
@@ -22,6 +23,9 @@ class AuthViewModel @Inject constructor(
     private val _signupFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val signupFlow: StateFlow<Resource<FirebaseUser>?> = _signupFlow
 
+    private val _resetPasswordFlow = MutableStateFlow<Resource<Void>?>(null)
+    val resetPasswordFlow: StateFlow<Resource<Void>?> = _resetPasswordFlow
+
     val currentUser: FirebaseUser?
         get() = repository.currentUser
 
@@ -41,6 +45,16 @@ class AuthViewModel @Inject constructor(
         _signupFlow.value = Resource.Loading
         val result = repository.signup(name, email, password)
         _signupFlow.value = result
+    }
+
+    fun forgetPassword(email: String) = viewModelScope.launch {
+        _resetPasswordFlow.value = Resource.Loading
+        val result = repository.forgetPassword(email)
+        _resetPasswordFlow.value = result
+    }
+
+    fun resetPasswordFlowNull() {
+        _resetPasswordFlow.value = null
     }
 
     fun logout() {

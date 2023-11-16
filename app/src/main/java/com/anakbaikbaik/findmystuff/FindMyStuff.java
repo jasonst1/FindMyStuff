@@ -4,5 +4,4 @@ import dagger.hilt.android.HiltAndroidApp;
 import android.app.Application;
 
 @HiltAndroidApp
-public class FindMyStuff extends Application {
-}
+public class FindMyStuff extends Application { }
