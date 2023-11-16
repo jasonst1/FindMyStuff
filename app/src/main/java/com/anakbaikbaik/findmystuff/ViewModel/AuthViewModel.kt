@@ -48,15 +48,8 @@ class AuthViewModel @Inject constructor(
 
     fun forgetPassword(email: String) = viewModelScope.launch {
         _resetPasswordFlow.value = Resource.Loading
-        try {
-            val result = repository.forgetPassword(email)
-            _resetPasswordFlow.value = Resource.Success(result)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            _resetPasswordFlow.value = Resource.Failure(e)
-        }finally {
-            _resetPasswordFlow.value = null
-        }
+        val result = repository.forgetPassword(email)
+        _resetPasswordFlow.value = result
     }
 
     fun logout() {
