@@ -31,6 +31,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -109,7 +111,9 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController) {
                 Conversation(viewModel, SampleData.conversationSample, navController)
             },
             bottomBar = {
-                NavigationBar() {
+                NavigationBar(
+                    containerColor = Color.White
+                ) {
                     items.forEachIndexed{ index, item ->
                         NavigationBarItem(
                             selected = selectedItemIndex == index,
@@ -137,7 +141,10 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController) {
                                         contentDescription = item.title
                                     )
                                 }
-                            }
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                indicatorColor = colorResource(R.color.white)
+                            )
                         )
                     }
                 }
