@@ -45,7 +45,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
@@ -185,7 +185,7 @@ fun AddArea(navController: NavController) {
         )
         if (imageUri != null) {
             Image(
-                painter = rememberImagePainter(data = imageUri),
+                painter = rememberAsyncImagePainter(model = imageUri),
                 contentDescription = null,
                 modifier = Modifier
                     .size(200.dp),
