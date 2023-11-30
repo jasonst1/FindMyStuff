@@ -71,7 +71,7 @@ fun AddScreen(navController: NavController) {
             hasNews = false,
         ),
         BottomNavigationItem(
-            title = "EditScreen",
+            title = "ArchiveScreen",
             selectedIcon = Icons.Filled.Refresh,
             unselectedIcon = Icons.Outlined.Refresh,
             hasNews = false,
@@ -80,7 +80,7 @@ fun AddScreen(navController: NavController) {
     val screenMap = mapOf(
         "HomeScreen" to Screen.HomeScreen,
         "AddScreen" to Screen.AddScreen,
-        "EditScreen" to Screen.EditScreen
+        "ArchiveScreen" to Screen.ArchiveScreen
     )
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)
@@ -228,7 +228,8 @@ fun AddArea(navController: NavController) {
                             "nama" to nama,
                             "lokasi" to lokasi,
                             "deskripsi" to deskripsi,
-                            "gambar" to imageUri.toString()
+                            "status" to "true",
+                            "gambar" to imageUri.toString(),
                         )
 
                         // Menambahkan data ke koleksi "items"

@@ -25,8 +25,9 @@ class FirestoreViewModel : ViewModel() {
                     val nama = document.getString("nama") ?: ""
                     val lokasi = document.getString("lokasi") ?: ""
                     val deskripsi = document.getString("deskripsi") ?: ""
+                    val status = document.getString("status") ?: ""
                     val gambar = document.getString("gambar") ?: ""
-                    itemMessagesList.add(ItemMessage(nama, lokasi, deskripsi, gambar))
+                    itemMessagesList.add(ItemMessage(nama, lokasi, deskripsi, status, gambar))
                 }
                 _itemMessages.value = itemMessagesList
             }

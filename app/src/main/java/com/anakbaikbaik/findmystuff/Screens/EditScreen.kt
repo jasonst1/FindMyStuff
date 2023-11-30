@@ -18,7 +18,6 @@ import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -37,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -49,6 +47,13 @@ import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
+
+data class Item(
+//    val id: String,
+    val nama: String,
+    val lokasi: String,
+    val deskripsi: String
+)
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,7 +72,7 @@ fun EditScreen(navController: NavController){
             hasNews = false,
         ),
         BottomNavigationItem(
-            title = "EditScreen",
+            title = "ArchiveScreen",
             selectedIcon = Icons.Filled.Refresh,
             unselectedIcon = Icons.Outlined.Refresh,
             hasNews = false,
@@ -76,7 +81,7 @@ fun EditScreen(navController: NavController){
     val screenMap = mapOf(
         "HomeScreen" to Screen.HomeScreen,
         "AddScreen" to Screen.AddScreen,
-        "EditScreen" to Screen.EditScreen
+        "ArchiveScreen" to Screen.ArchiveScreen
     )
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)
@@ -191,12 +196,35 @@ fun EditArea(navController: NavController){
 //                onButtonClick()
                 }
             }
+            // In your ViewModel or repository, add a function to update the item
+//            fun updateItem(item: Item) {
+//                // Get a reference to the Firestore collection where your items are stored
+//                val itemsCollectionRef = Firebase.firestore.collection("items")
+//
+//                // Update the item in Firestore
+//                itemsCollectionRef.document(item.id).update(
+//                    mapOf(
+//                        "nama" to item.nama,
+//                        "lokasi" to item.lokasi,
+//                        "deskripsi" to item.deskripsi
+//                    )
+//                ).addOnSuccessListener {
+//                    // Handle success, e.g., show a toast or navigate back to the previous screen
+//                }.addOnFailureListener { e ->
+//                    // Handle failure, e.g., show an error message
+//                }
+//            }
             Column {
                 GreenTextButton(
                     text = stringResource(id = R.string.approveButton)
                 ) {
-                    // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
-//                onButtonClick()
+//                    val updatedItem = Item(
+//                        id = "item_id", // Replace with the actual item ID
+//                        nama = nama,
+//                        lokasi = lokasi,
+//                        deskripsi = deskripsi
+//                    )
+//                    updateItem(updatedItem)
                 }
             }
         }
