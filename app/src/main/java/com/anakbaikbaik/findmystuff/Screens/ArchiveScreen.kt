@@ -44,7 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -63,25 +62,9 @@ import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
-data class BottomNavigationItem(
-    val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val hasNews: Boolean,
-    val badgeCount: Int? = null
-)
-
-data class ItemMessage(
-    val nama: String,
-    val lokasi: String,
-    val deskripsi: String,
-    val status: String,
-    val gambar: String
-)
-
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun HomeScreen(viewModel: AuthViewModel?, navController: NavController, firestoreViewModel: AuthViewModel?) {
+fun ArchiveScreen(viewModel: AuthViewModel?, navController: NavController, firestoreViewModel: AuthViewModel?) {
     var itemMessages by remember {
         mutableStateOf<List<ItemMessage>>(emptyList())
     }
@@ -127,7 +110,7 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController, firestor
     }
 
     // Bikin filter yang ditampilin hanya yang mana?
-    val filteredItemMessages = itemMessages.filter { it.status == "true" }
+    val filteredItemMessages = itemMessages.filter { it.status == "false" }
 
     val items = listOf(
         BottomNavigationItem(
@@ -161,12 +144,12 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController, firestor
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Log.d("HomeScreen", viewModel.toString())
+        Log.d("ArchiveScreen", viewModel.toString())
         Scaffold(
             topBar = { topBar() },
             content = {it
                 // Add padding to the main content area
-                Conversation(viewModel, filteredItemMessages, navController)
+                calling(viewModel, filteredItemMessages, navController)
             },
             bottomBar = {
                 NavigationBar(
@@ -212,12 +195,12 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController, firestor
 }
 
 @Composable
-fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navController: NavController) {
+fun calling(viewModel: AuthViewModel?, messages: List<ItemMessage>, navController: NavController) {
     LazyColumn (
         modifier = Modifier.padding(top = 64.dp)
     ) {
         items(messages) { message ->
-            MessageCard(message, navController)
+            MessageCardArchive(message, navController)
             // Display user information
 //            viewModel?.currentUser?.let { user ->
 //                Text("Username: ${user.displayName ?: "N/A"}")
@@ -238,7 +221,7 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
 }
 
 @Composable
-fun MessageCard(itemMessage: ItemMessage, navController: NavController) {
+fun MessageCardArchive(itemMessage: ItemMessage, navController: NavController) {
     val context = LocalContext.current
     Log.d("Image URL", itemMessage.gambar)
 
