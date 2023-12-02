@@ -1,11 +1,15 @@
 package com.anakbaikbaik.findmystuff.Data
 
 import android.util.Log
+import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -29,6 +33,24 @@ class Authentication @Inject constructor(
     override suspend fun signup(name: String, email: String, password: String): Resource<FirebaseUser> {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+
+            val user = result.user
+            val db = Firebase.firestore
+
+            val userData = hashMapOf(
+                "nama" to user?.displayName,
+                "email" to user?.,
+                "role" to "0"
+            )
+
+            try{
+                db.collection("users")
+                    .add(userData)
+            }
+            catch (e: Exception){
+                Log.d("Error", e.toString())
+            }
+
             result.user?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(name).build())?.await()
             Resource.Success(result.user!!)
         } catch (e: Exception) {

@@ -61,6 +61,7 @@ import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 
 data class BottomNavigationItem(
