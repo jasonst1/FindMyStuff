@@ -61,5 +61,6 @@ class AuthViewModel @Inject constructor(
         repository.logout()
         _loginFlow.value = null
         _signupFlow.value = null
+        _resetPasswordFlow.value = null
     }
 }
