@@ -11,6 +11,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import java.util.Objects
 import javax.inject.Inject
 
 class Authentication @Inject constructor(
@@ -37,17 +38,18 @@ class Authentication @Inject constructor(
             val user = result.user
             val db = Firebase.firestore
 
-            val userData = hashMapOf(
-                "nama" to user?.displayName,
-                "email" to user?.,
-                "role" to "0"
-            )
-
             try{
-                db.collection("users")
-                    .add(userData)
-            }
-            catch (e: Exception){
+                if (user != null) {
+                    db.collection("users").document(user.uid)
+                        .set(
+                            mapOf(
+                                "nama" to name,
+                                "email" to user?.email,
+                                "role" to "0"
+                            )
+                        )
+                }
+            } catch (e: Exception){
                 Log.d("Error", e.toString())
             }
 
