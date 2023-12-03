@@ -65,6 +65,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3:1.1.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -88,4 +89,7 @@ dependencies {
 
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-compiler:2.44")
+
+    implementation ("androidx.datastore:datastore-core:1.0.0")
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
 }

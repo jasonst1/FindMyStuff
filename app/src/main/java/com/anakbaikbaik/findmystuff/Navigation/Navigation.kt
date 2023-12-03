@@ -15,13 +15,16 @@ import com.anakbaikbaik.findmystuff.Screens.HomeScreen
 import com.anakbaikbaik.findmystuff.Screens.LandingScreen
 import com.anakbaikbaik.findmystuff.Screens.SignUpScreen
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
+import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 
 @Composable
 fun Navigation(
-    viewModel: AuthViewModel
+    viewModel: AuthViewModel,
+    roleViewModel: RoleViewModel
 ) {
     val viewModel: AuthViewModel? = viewModel
     val firestoreViewModel: AuthViewModel? = viewModel
+    val roleViewModel: RoleViewModel = roleViewModel
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.LandingScreen.route){
@@ -29,7 +32,7 @@ fun Navigation(
             LandingScreen(viewModel = viewModel, navController = navController)
         }
         composable(route = Screen.HomeScreen.route){
-            HomeScreen(viewModel = viewModel, navController = navController, firestoreViewModel = firestoreViewModel)
+            HomeScreen(viewModel = viewModel, navController = navController, firestoreViewModel = firestoreViewModel, roleViewModel = roleViewModel)
         }
         composable(route = Screen.ArchiveScreen.route){
             ArchiveScreen(viewModel = viewModel, navController = navController, firestoreViewModel = firestoreViewModel)
