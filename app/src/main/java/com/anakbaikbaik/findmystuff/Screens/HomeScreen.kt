@@ -243,10 +243,15 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
                 Text(text = "Logout")
             }
             roleViewModel?.retrieveData()
-            roleViewModel?.currentSession?.value?.let { session ->
-                Text("Username: ${session.name ?: "N/A"}")
-                Text("Email: ${session.email ?: "N/A"}")
-                Text("Role: ${session.role ?: "N/A"}")
+            val currentSession by roleViewModel!!.currentSession.collectAsState()
+
+            // Display data from the observed 'currentSession' in your UI
+            currentSession?.let { session ->
+                Column {
+                    Text("Email: ${session.email ?: "N/A"}")
+                    Text("User ID: ${session.userId ?: "N/A"}")
+                    Text("Role: ${session.role ?: "N/A"}")
+                }
             }
         }
     }
