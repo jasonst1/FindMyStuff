@@ -1,6 +1,6 @@
 package com.anakbaikbaik.findmystuff.Model
 
-data class User(
+data class Session(
     val userId: String,
     val name: String,
     val email: String,
