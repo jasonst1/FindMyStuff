@@ -1,5 +1,14 @@
 package com.anakbaikbaik.findmystuff.Screens
 
+import android.Manifest
+import android.content.ContentValues
+import android.content.Context
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.MediaStore
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,15 +18,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -37,29 +47,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
-data class Item(
-//    val id: String,
-    val nama: String,
-    val lokasi: String,
-    val deskripsi: String
-)
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun EditScreen(navController: NavController){
+fun EditScreen(navController: NavController) {
     val items = listOf(
         BottomNavigationItem(
             title = "HomeScreen",
@@ -68,9 +77,9 @@ fun EditScreen(navController: NavController){
             hasNews = false,
         ),
         BottomNavigationItem(
-            title = "AddScreen",
-            selectedIcon = Icons.Filled.Add,
-            unselectedIcon = Icons.Outlined.Add,
+            title = "EditScreen",
+            selectedIcon = Icons.Filled.Edit,
+            unselectedIcon = Icons.Outlined.Edit,
             hasNews = false,
         ),
         BottomNavigationItem(
@@ -90,145 +99,233 @@ fun EditScreen(navController: NavController){
     }
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
+        color = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground,
+        content = {
+            Scaffold(
+                topBar = { topBar() },
+                content = {it
+                    EditArea(navController)
+                },
+                bottomBar = {
+                    NavigationBar(
 
-        Scaffold(
-            topBar = { topBar() },
-            content = {it
-                // Add padding to the main content area
-                EditArea(navController)
-            },
-            bottomBar = {
-                NavigationBar(
-                    containerColor = Color.White
-                ) {
-                    items.forEachIndexed{ index, item ->
-                        NavigationBarItem(
-                            selected = selectedItemIndex == index,
-                            onClick = {
-                                selectedItemIndex = index
-                                screenMap[item.title]?.let { navController.navigate(it.route) }
-                            },
-                            alwaysShowLabel = false,
-                            icon = {
-                                BadgedBox(
-                                    badge = {
-                                        if(item.badgeCount != null) {
-                                            Badge {
-                                                Text(text = item.badgeCount.toString())
+                        containerColor = Color.White
+                    ) {
+                        items.forEachIndexed{ index, item ->
+                            NavigationBarItem(
+                                selected = selectedItemIndex == index,
+                                onClick = {
+                                    selectedItemIndex = index
+                                    screenMap[item.title]?.let { navController.navigate(it.route) }
+                                },
+                                alwaysShowLabel = false,
+                                icon = {
+                                    BadgedBox(
+                                        badge = {
+                                            if(item.badgeCount != null) {
+                                                Badge {
+                                                    Text(text = item.badgeCount.toString())
+                                                }
+                                            } else if(item.hasNews) {
+                                                Badge()
                                             }
-                                        } else if(item.hasNews) {
-                                            Badge()
-                                        }
+                                        },
+                                    ) {
+                                        Icon(
+                                            imageVector = if (index == selectedItemIndex) {
+                                                item.selectedIcon
+                                            } else item.unselectedIcon,
+                                            contentDescription = item.title
+                                        )
                                     }
-                                ) {
-                                    Icon(
-                                        imageVector = if (index == selectedItemIndex) {
-                                            item.selectedIcon
-                                        } else item.unselectedIcon,
-                                        contentDescription = item.title
-                                    )
-                                }
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                indicatorColor = colorResource(R.color.white)
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    indicatorColor = colorResource(R.color.white)
+                                )
                             )
-                        )
+                        }
                     }
                 }
-            }
-        )
-    }
+            )
+        }
+    )
 }
 
 @Composable
-fun EditArea(navController: NavController){
+fun EditArea(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .padding(top = 20.dp),
+            .padding(top = 100.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         var nama by remember { mutableStateOf("") }
         var lokasi by remember { mutableStateOf("") }
         var deskripsi by remember { mutableStateOf("") }
+        var imageUri by remember { mutableStateOf<Uri?>(null) }
+        val context = LocalContext.current
 
-        Image(
-            painter = painterResource(R.drawable.monyet),
-            contentDescription = null,
-            modifier = Modifier
-                .size(200.dp),
-            contentScale = ContentScale.Crop
-        )
-        Text(
-            text = "Name"
+        val cameraPermissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted, launch camera
+                camera(context)
+            } else {
+                // Permission denied, handle accordingly
+                println("Camera permission denied")
+            }
+        }
+
+        val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicture()
+        ) { isSuccessful: Boolean ->
+            if (isSuccessful) {
+                // Handle successful capture
+                // You can perform additional actions if needed
+            } else {
+                println("Image capture canceled or unsuccessful")
+            }
+        }
+
+        imageUri?.let { uri ->
+            Image(
+                painter = rememberAsyncImagePainter(model = uri),
+                contentDescription = null,
+                modifier = Modifier.size(200.dp),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        val galleryLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+            onResult = { result: Uri? ->
+                imageUri = result
+            }
         )
         OutlinedTextField(
             value = nama,
-            onValueChange = { nama = it },
-            label = { Text("Label") }
-        )
-        Text(
-            text = "Lokasi"
+            onValueChange = { value -> nama = value },
+            label = { Text("Name") }
         )
         OutlinedTextField(
             value = lokasi,
-            onValueChange = { lokasi = it },
-            label = { Text("Label") }
-        )
-        Text(
-            text = "Deskripsi"
+            onValueChange = { value -> lokasi = value },
+            label = { Text("Lokasi") }
         )
         OutlinedTextField(
             value = deskripsi,
-            onValueChange = { deskripsi = it },
-            label = { Text("Label") }
+            onValueChange = { value -> deskripsi = value },
+            label = { Text("Deskripsi") }
         )
-        Row (
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            FloatingActionButton(
+                onClick = {
+                    if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                        val hasPermission = ContextCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.CAMERA
+                        ) == PackageManager.PERMISSION_GRANTED
+
+                        if (hasPermission) {
+                            // Permission granted, launch camera
+                            cameraLauncher.launch(capturedImageUri(context))
+                        } else {
+                            // Request camera permission
+                            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    } else {
+                        // Device does not have a camera, handle accordingly
+                        println("Device does not have a camera")
+                    }
+                },
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.camera),
+                    contentDescription = null
+                )
+            }
+            FloatingActionButton(
+                onClick = {
+                    // Launch the gallery intent to select an image
+                    galleryLauncher.launch("image/*")
+                },
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.folder),
+                    contentDescription = null
+                )
+            }
+        }
+        Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
             Column {
                 RedTextButton(
                     text = stringResource(id = R.string.cancelButton),
-                ) {
-                    // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
-//                onButtonClick()
-                }
+                    onClick = {
+                        navController.navigate(Screen.HomeScreen.route)
+                    }
+                )
             }
-            // In your ViewModel or repository, add a function to update the item
-//            fun updateItem(item: Item) {
-//                // Get a reference to the Firestore collection where your items are stored
-//                val itemsCollectionRef = Firebase.firestore.collection("items")
-//
-//                // Update the item in Firestore
-//                itemsCollectionRef.document(item.id).update(
-//                    mapOf(
-//                        "nama" to item.nama,
-//                        "lokasi" to item.lokasi,
-//                        "deskripsi" to item.deskripsi
-//                    )
-//                ).addOnSuccessListener {
-//                    // Handle success, e.g., show a toast or navigate back to the previous screen
-//                }.addOnFailureListener { e ->
-//                    // Handle failure, e.g., show an error message
-//                }
-//            }
             Column {
                 GreenTextButton(
                     text = stringResource(id = R.string.approveButton)
                 ) {
-//                    val updatedItem = Item(
-//                        id = "item_id", // Replace with the actual item ID
-//                        nama = nama,
-//                        lokasi = lokasi,
-//                        deskripsi = deskripsi
-//                    )
-//                    updateItem(updatedItem)
+                    // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
+                    if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
+                        // Inisialisasi Firebase Firestore
+                        val db = Firebase.firestore
+
+                        // Membuat objek data
+                        val itemData = hashMapOf(
+                            "nama" to nama,
+                            "lokasi" to lokasi,
+                            "deskripsi" to deskripsi,
+                            "status" to "true",
+                            "gambar" to imageUri.toString(),
+                        )
+
+                        // Menambahkan data ke koleksi "items"
+                        db.collection("items")
+                            .add(itemData)
+                            .addOnSuccessListener {
+                                // Handle sukses (opsional)
+                                navController.navigate(Screen.HomeScreen.route)
+                            }
+                            .addOnFailureListener {
+                                // Handle gagal (opsional)
+                                // Anda dapat menampilkan pesan kesalahan atau mencatat pesan kesalahan
+                            }
+                    }
                 }
             }
         }
+    }
+}
+
+fun capturedImageUri(context: Context): Uri? {
+    val contentValues = ContentValues().apply {
+        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
+    }
+
+    return context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+}
+
+fun camera(context: Context) {
+    try {
+        // Start the camera activity using the photoUri
+    } catch (e: Exception) {
+        println("Error launching camera: ${e.message}")
     }
 }

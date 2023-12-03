@@ -1,6 +1,12 @@
 package com.anakbaikbaik.findmystuff.Screens
 
+import android.Manifest
+import android.content.ContentValues
+import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.provider.MediaStore
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -41,9 +47,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Navigation.Screen
@@ -53,6 +62,7 @@ import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,6 +107,7 @@ fun AddScreen(navController: NavController) {
                 },
                 bottomBar = {
                     NavigationBar(
+
                         containerColor = Color.White
                     ) {
                         items.forEachIndexed{ index, item ->
@@ -152,6 +163,39 @@ fun AddArea(navController: NavController) {
         var lokasi by remember { mutableStateOf("") }
         var deskripsi by remember { mutableStateOf("") }
         var imageUri by remember { mutableStateOf<Uri?>(null) }
+        val context = LocalContext.current
+
+        val cameraPermissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted, launch camera
+                launchCamera(context)
+            } else {
+                // Permission denied, handle accordingly
+                println("Camera permission denied")
+            }
+        }
+
+        val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicture()
+        ) { isSuccessful: Boolean ->
+            if (isSuccessful) {
+                // Handle successful capture
+                // You can perform additional actions if needed
+            } else {
+                println("Image capture canceled or unsuccessful")
+            }
+        }
+
+        imageUri?.let { uri ->
+            Image(
+                painter = rememberAsyncImagePainter(model = uri),
+                contentDescription = null,
+                modifier = Modifier.size(200.dp),
+                contentScale = ContentScale.Crop
+            )
+        }
 
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
@@ -159,49 +203,66 @@ fun AddArea(navController: NavController) {
                 imageUri = result
             }
         )
-        Text(
-            text = "Name"
-        )
         OutlinedTextField(
             value = nama,
             onValueChange = { value -> nama = value },
-            label = { Text("Label") }
-        )
-        Text(
-            text = "Lokasi"
+            label = { Text("Name") }
         )
         OutlinedTextField(
             value = lokasi,
             onValueChange = { value -> lokasi = value },
-            label = { Text("Label") }
-        )
-        Text(
-            text = "Deskripsi"
+            label = { Text("Lokasi") }
         )
         OutlinedTextField(
             value = deskripsi,
             onValueChange = { value -> deskripsi = value },
-            label = { Text("Label") }
+            label = { Text("Deskripsi") }
         )
-        if (imageUri != null) {
-            Image(
-                painter = rememberAsyncImagePainter(model = imageUri),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(200.dp),
-                contentScale = ContentScale.Crop
-            )
-        } else {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
             FloatingActionButton(
                 onClick = {
-                    galleryLauncher.launch("image/*")
+                    if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                        val hasPermission = ContextCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.CAMERA
+                        ) == PackageManager.PERMISSION_GRANTED
+
+                        if (hasPermission) {
+                            // Permission granted, launch camera
+                            cameraLauncher.launch(getCapturedImageUri(context))
+                        } else {
+                            // Request camera permission
+                            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    } else {
+                        // Device does not have a camera, handle accordingly
+                        println("Device does not have a camera")
+                    }
                 },
-                modifier = Modifier
-                    .padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp)
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                Icon(
+                    painter = painterResource(id = R.drawable.camera),
+                    contentDescription = null
+                )
             }
-        }
+            FloatingActionButton(
+                        onClick = {
+                            // Launch the gallery intent to select an image
+                            galleryLauncher.launch("image/*")
+                        },
+                        modifier = Modifier
+                            .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.folder),
+                            contentDescription = null
+                        )
+                    }
+                }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
@@ -250,3 +311,19 @@ fun AddArea(navController: NavController) {
     }
 }
 
+fun getCapturedImageUri(context: Context): Uri? {
+    val contentValues = ContentValues().apply {
+        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
+    }
+
+    return context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+}
+
+fun launchCamera(context: Context) {
+    try {
+        // Start the camera activity using the photoUri
+    } catch (e: Exception) {
+        println("Error launching camera: ${e.message}")
+    }
+}
