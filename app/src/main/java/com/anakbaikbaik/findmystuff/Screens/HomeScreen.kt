@@ -36,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.anakbaikbaik.findmystuff.Model.Session
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
@@ -240,8 +242,12 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
             ){
                 Text(text = "Logout")
             }
-            val sessionData = roleViewModel?.retrieveData()
-            Text(text = sessionData.toString())
+            roleViewModel?.retrieveData()
+            roleViewModel?.currentSession?.value?.let { session ->
+                Text("Username: ${session.name ?: "N/A"}")
+                Text("Email: ${session.email ?: "N/A"}")
+                Text("Role: ${session.role ?: "N/A"}")
+            }
         }
     }
 }
