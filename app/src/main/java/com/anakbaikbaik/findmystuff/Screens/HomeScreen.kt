@@ -303,11 +303,11 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController) {
             }
             Column {
                 RedTextButton(
-                    text = stringResource(id = R.string.deleteButton)
-                ) {
-                    // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
-//                onButtonClick()
-                }
+                    text = stringResource(id = R.string.deleteButton),
+                    onClick = {
+                        navController.navigate(Screen.DeleteScreen.route)
+                    }
+                )
             }
         }
     }
