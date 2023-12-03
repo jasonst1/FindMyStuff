@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.anakbaikbaik.findmystuff.Screens.AddScreen
 import com.anakbaikbaik.findmystuff.Screens.ArchiveScreen
+import com.anakbaikbaik.findmystuff.Screens.DeleteScreen
 import com.anakbaikbaik.findmystuff.Screens.EditScreen
 import com.anakbaikbaik.findmystuff.Screens.ForgetPasswordScreen
 import com.anakbaikbaik.findmystuff.Screens.HomeScreen
@@ -45,6 +46,9 @@ fun Navigation(
         }
         composable(route = Screen.ForgetPasswordScreen.route){
             ForgetPasswordScreen(viewModel = viewModel, navController = navController)
+        }
+        composable(route = Screen.DeleteScreen.route){
+            DeleteScreen(navController = navController)
         }
     }
 }
