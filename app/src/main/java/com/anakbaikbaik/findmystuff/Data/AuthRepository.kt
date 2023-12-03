@@ -1,5 +1,6 @@
 package com.anakbaikbaik.findmystuff.Data
 
+import com.anakbaikbaik.findmystuff.Model.Session
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
 

@@ -3,6 +3,7 @@ package com.anakbaikbaik.findmystuff.DI
 import com.anakbaikbaik.findmystuff.Data.AuthRepository
 import com.anakbaikbaik.findmystuff.Data.Authentication
 import com.anakbaikbaik.findmystuff.DataStore.SessionData
+import com.anakbaikbaik.findmystuff.DataStore.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -20,5 +21,5 @@ object AppModule {
     fun providesAuthRepository(impl: Authentication): AuthRepository = impl
 
     @Provides
-    fun providesSessionData(impl: SessionData): SessionData = impl
+    fun providesSessionData(impl: SessionData): UserRepository = impl
 }

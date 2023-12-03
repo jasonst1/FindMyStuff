@@ -1,6 +1,8 @@
 package com.anakbaikbaik.findmystuff.Data
 
 import android.util.Log
+import com.anakbaikbaik.findmystuff.DataStore.SessionData
+import com.anakbaikbaik.findmystuff.Model.Session
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -15,7 +17,8 @@ import java.util.Objects
 import javax.inject.Inject
 
 class Authentication @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val sessionData: SessionData
 ) : AuthRepository {
 
     override val currentUser: FirebaseUser?
@@ -37,6 +40,7 @@ class Authentication @Inject constructor(
 
             val user = result.user
             val db = Firebase.firestore
+            val role = "0"
 
             try{
                 if (user != null) {
@@ -44,10 +48,18 @@ class Authentication @Inject constructor(
                         .set(
                             mapOf(
                                 "nama" to name,
-                                "email" to user?.email,
-                                "role" to "0"
+                                "email" to user.email,
+                                "role" to role
                             )
                         )
+                    sessionData.saveUser(
+                        Session(
+                            userId = user.uid,
+                            name = name,
+                            email = user.email!!,
+                            role = role
+                        )
+                    )
                 }
             } catch (e: Exception){
                 Log.d("Error", e.toString())
@@ -80,5 +92,4 @@ class Authentication @Inject constructor(
     override fun logout() {
         firebaseAuth.signOut()
     }
-
 }

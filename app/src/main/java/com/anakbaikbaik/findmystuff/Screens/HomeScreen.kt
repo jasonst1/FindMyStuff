@@ -56,6 +56,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
+import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
@@ -63,6 +64,7 @@ import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
+import dagger.assisted.Assisted
 
 data class BottomNavigationItem(
     val title: String,
@@ -82,7 +84,11 @@ data class ItemMessage(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun HomeScreen(viewModel: AuthViewModel?, navController: NavController, firestoreViewModel: AuthViewModel?) {
+fun HomeScreen(
+    viewModel: AuthViewModel?,
+    navController: NavController,
+    firestoreViewModel: AuthViewModel?,
+    roleViewModel: RoleViewModel?) {
     var itemMessages by remember {
         mutableStateOf<List<ItemMessage>>(emptyList())
     }
@@ -167,7 +173,7 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController, firestor
             topBar = { topBar() },
             content = {it
                 // Add padding to the main content area
-                Conversation(viewModel, filteredItemMessages, navController)
+                Conversation(viewModel, filteredItemMessages, navController, roleViewModel)
             },
             bottomBar = {
                 NavigationBar(
@@ -213,7 +219,7 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController, firestor
 }
 
 @Composable
-fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navController: NavController) {
+fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navController: NavController, roleViewModel: RoleViewModel?) {
     LazyColumn (
         modifier = Modifier.padding(top = 64.dp)
     ) {
@@ -234,6 +240,8 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
             ){
                 Text(text = "Logout")
             }
+            val sessionData = roleViewModel?.retrieveData()
+            Text(text = sessionData.toString())
         }
     }
 }

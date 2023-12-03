@@ -1,11 +1,14 @@
 package com.anakbaikbaik.findmystuff.ViewModel
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anakbaikbaik.findmystuff.Data.AuthRepository
 import com.anakbaikbaik.findmystuff.Data.Resource
+import com.anakbaikbaik.findmystuff.DataStore.SessionData
 import com.google.firebase.auth.FirebaseUser
+import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val sessionData: SessionData
 ) : ViewModel() {
 
     private val _loginFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
@@ -62,5 +66,6 @@ class AuthViewModel @Inject constructor(
         _loginFlow.value = null
         _signupFlow.value = null
         _resetPasswordFlow.value = null
+        sessionData.clearSessionData()
     }
 }
