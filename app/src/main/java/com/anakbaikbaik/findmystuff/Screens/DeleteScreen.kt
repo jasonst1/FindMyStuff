@@ -143,7 +143,7 @@ fun DeleteArea(navController: NavController) {
         Text(text = "Anda yakin ingin menghapus item ini?")
 
         RedTextButton(
-            text = "Hapus",
+            text = "Delete",
             onClick = {
                 // Logika untuk menghapus item dari database atau melakukan tindakan yang diperlukan
             }
