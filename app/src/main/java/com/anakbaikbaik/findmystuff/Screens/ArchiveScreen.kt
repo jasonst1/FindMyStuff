@@ -176,7 +176,7 @@ fun ArchiveScreen(viewModel: AuthViewModel?, navController: NavController, fires
                                 ) {
                                     Icon(
                                         imageVector = if (index == selectedItemIndex) {
-                                            item.selectedIcon
+                                            item.unselectedIcon
                                         } else item.unselectedIcon,
                                         contentDescription = item.title
                                     )

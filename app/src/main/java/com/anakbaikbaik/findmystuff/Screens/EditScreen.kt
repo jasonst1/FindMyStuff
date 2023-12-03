@@ -133,7 +133,7 @@ fun EditScreen(viewModel: AuthViewModel?, navController: NavController) {
                                     ) {
                                         Icon(
                                             imageVector = if (index == selectedItemIndex) {
-                                                item.selectedIcon
+                                                item.unselectedIcon
                                             } else item.unselectedIcon,
                                             contentDescription = item.title
                                         )

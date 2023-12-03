@@ -35,7 +35,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.anakbaikbaik.findmystuff.Model.Session
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
@@ -63,9 +61,7 @@ import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
-import dagger.assisted.Assisted
 
 data class BottomNavigationItem(
     val title: String,
@@ -208,7 +204,7 @@ fun HomeScreen(
                                 ) {
                                     Icon(
                                         imageVector = if (index == selectedItemIndex) {
-                                            item.selectedIcon
+                                            item.unselectedIcon
                                         } else item.unselectedIcon,
                                         contentDescription = item.title
                                     )
@@ -237,7 +233,7 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
 //                Text("Username: ${user.displayName ?: "N/A"}")
 //                Text("Email: ${user.email ?: "N/A"}")
 //            }
-            
+
 //            Button(
 //                onClick = {
 //                    viewModel?.logout()
@@ -248,17 +244,18 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
 //            ){
 //                Text(text = "Logout")
 //            }
-            roleViewModel?.retrieveData()
-            val currentSession by roleViewModel!!.currentSession.collectAsState()
 
-            // Display data from the observed 'currentSession' in your UI
-            currentSession?.let { session ->
-                Column {
-                    Text("Email: ${session.email ?: "N/A"}")
-                    Text("User ID: ${session.userId ?: "N/A"}")
-                    Text("Role: ${session.role ?: "N/A"}")
-                }
-            }
+//            roleViewModel?.retrieveData()
+//            val currentSession by roleViewModel!!.currentSession.collectAsState()
+//
+//            // Display data from the observed 'currentSession' in your UI
+//            currentSession?.let { session ->
+//                Column {
+//                    Text("Email: ${session.email ?: "N/A"}")
+//                    Text("User ID: ${session.userId ?: "N/A"}")
+//                    Text("Role: ${session.role ?: "N/A"}")
+//                }
+//            }
         }
     }
 }
