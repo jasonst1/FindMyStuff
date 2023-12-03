@@ -24,7 +24,6 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -58,7 +57,7 @@ import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
-import com.anakbaikbaik.findmystuff.ui.theme.topBar
+import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -72,11 +71,14 @@ data class BottomNavigationItem(
 )
 
 data class ItemMessage(
+    val id: String,
     val nama: String,
     val lokasi: String,
     val deskripsi: String,
     val status: String,
-    val gambar: String
+    val gambar: String,
+    val pengambil: String,
+    val nim: String
 )
 
 @Composable
@@ -103,13 +105,16 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController, firestor
             // Convert Firestore documents to ItemMessage objects
             val messages = querySnapshot?.documents?.mapNotNull { document ->
                 try {
+                    val id = document.id
                     val nama = document.getString("nama") ?: ""
                     val lokasi = document.getString("lokasi") ?: ""
                     val deskripsi = document.getString("deskripsi") ?: ""
                     val status = document.getString("status") ?: ""
                     val gambar = document.getString("gambar") ?: ""
+                    val pengambil = document.getString("pengambil") ?: ""
+                    val nim = document.getString("nim") ?: ""
 
-                    ItemMessage(nama, lokasi, deskripsi, status, gambar)
+                    ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, nim)
                 } catch (e: Exception) {
                     // Handle parsing error here
                     null
@@ -163,7 +168,7 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController, firestor
     ) {
         Log.d("HomeScreen", viewModel.toString())
         Scaffold(
-            topBar = { topBar() },
+            topBar = { TopBarWithLogout(viewModel, navController) },
             content = {it
                 // Add padding to the main content area
                 Conversation(viewModel, filteredItemMessages, navController)
@@ -214,7 +219,7 @@ fun HomeScreen(viewModel: AuthViewModel?, navController: NavController, firestor
 @Composable
 fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navController: NavController) {
     LazyColumn (
-        modifier = Modifier.padding(top = 64.dp)
+        modifier = Modifier.padding(top = 64.dp, bottom = 80.dp)
     ) {
         items(messages) { message ->
             MessageCard(message, navController)
@@ -223,16 +228,16 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
 //                Text("Username: ${user.displayName ?: "N/A"}")
 //                Text("Email: ${user.email ?: "N/A"}")
 //            }
-            Button(
-                onClick = {
-                    viewModel?.logout()
-                    navController.navigate(Screen.LandingScreen.route) {
-                        popUpTo(Screen.LandingScreen.route) { inclusive = true }
-                    }
-                }
-            ){
-                Text(text = "Logout")
-            }
+//            Button(
+//                onClick = {
+//                    viewModel?.logout()
+//                    navController.navigate(Screen.LandingScreen.route) {
+//                        popUpTo(Screen.LandingScreen.route) { inclusive = true }
+//                    }
+//                }
+//            ){
+//                Text(text = "Logout")
+//            }
         }
     }
 }
@@ -282,7 +287,7 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Lokasi: ${itemMessage.lokasi}\nDeskripsi: ${itemMessage.deskripsi}",
+                    text = "ID : ${itemMessage.id}\nLokasi : ${itemMessage.lokasi}\nDeskripsi : ${itemMessage.deskripsi}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 15.sp
@@ -303,11 +308,10 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController) {
             }
             Column {
                 RedTextButton(
-                    text = stringResource(id = R.string.deleteButton),
-                    onClick = {
-                        navController.navigate(Screen.DeleteScreen.route)
-                    }
-                )
+                    text = stringResource(id = R.string.deleteButton)
+                ) {
+                    navController.navigate("${Screen.DeleteScreen.route}/${itemMessage.id}")
+                }
             }
         }
     }

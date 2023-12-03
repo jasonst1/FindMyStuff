@@ -57,16 +57,17 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
+import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
-import com.anakbaikbaik.findmystuff.ui.theme.topBar
+import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AddScreen(navController: NavController) {
+fun AddScreen(viewModel: AuthViewModel?, navController: NavController) {
     val items = listOf(
         BottomNavigationItem(
             title = "HomeScreen",
@@ -101,7 +102,7 @@ fun AddScreen(navController: NavController) {
         contentColor = MaterialTheme.colorScheme.onBackground,
         content = {
             Scaffold(
-                topBar = { topBar() },
+                topBar = { TopBarWithLogout(viewModel, navController) },
                 content = {it
                     AddArea(navController)
                 },

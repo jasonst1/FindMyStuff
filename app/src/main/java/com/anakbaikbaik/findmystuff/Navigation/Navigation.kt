@@ -1,9 +1,11 @@
 package com.anakbaikbaik.findmystuff.Navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.anakbaikbaik.findmystuff.Screens.AddScreen
 import com.anakbaikbaik.findmystuff.Screens.ArchiveScreen
 import com.anakbaikbaik.findmystuff.Screens.DeleteScreen
@@ -33,10 +35,10 @@ fun Navigation(
             ArchiveScreen(viewModel = viewModel, navController = navController, firestoreViewModel = firestoreViewModel)
         }
         composable(route = Screen.EditScreen.route){
-             EditScreen(navController = navController)
+             EditScreen(viewModel = viewModel, navController = navController)
         }
         composable(route = Screen.AddScreen.route) {
-            AddScreen(navController = navController)
+            AddScreen(viewModel = viewModel, navController = navController)
         }
         composable(route = Screen.SignUpScreen.route){
             SignUpScreen(viewModel = viewModel, navController = navController)
@@ -44,8 +46,13 @@ fun Navigation(
         composable(route = Screen.ForgetPasswordScreen.route){
             ForgetPasswordScreen(viewModel = viewModel, navController = navController)
         }
-        composable(route = Screen.DeleteScreen.route){
-            DeleteScreen(navController = navController)
+        composable(
+            route = "${Screen.DeleteScreen.route}/{itemId}",
+            arguments = listOf(navArgument("itemId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getString("itemId")
+            DeleteScreen(viewModel = viewModel, itemId = itemId, navController = navController)
         }
+
     }
 }

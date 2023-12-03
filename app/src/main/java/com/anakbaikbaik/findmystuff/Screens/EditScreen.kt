@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Edit
@@ -51,24 +51,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
+import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
-import com.anakbaikbaik.findmystuff.ui.theme.topBar
+import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun EditScreen(navController: NavController) {
+fun EditScreen(viewModel: AuthViewModel?, navController: NavController) {
     val items = listOf(
         BottomNavigationItem(
             title = "HomeScreen",
@@ -78,7 +77,7 @@ fun EditScreen(navController: NavController) {
         ),
         BottomNavigationItem(
             title = "EditScreen",
-            selectedIcon = Icons.Filled.Edit,
+            selectedIcon = Icons.Filled.Add,
             unselectedIcon = Icons.Outlined.Edit,
             hasNews = false,
         ),
@@ -103,7 +102,7 @@ fun EditScreen(navController: NavController) {
         contentColor = MaterialTheme.colorScheme.onBackground,
         content = {
             Scaffold(
-                topBar = { topBar() },
+                topBar = { TopBarWithLogout(viewModel, navController) },
                 content = {it
                     EditArea(navController)
                 },
