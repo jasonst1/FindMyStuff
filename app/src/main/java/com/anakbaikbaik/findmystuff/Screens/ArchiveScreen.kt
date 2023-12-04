@@ -246,7 +246,7 @@ fun MessageCardArchive(itemMessage: ItemMessage, navController: NavController) {
                         painter = rememberAsyncImagePainter(model = itemMessage.gambar),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(130.dp),
+                            .size(180.dp),
                         contentScale = ContentScale.Crop
                     )
                 }
@@ -259,9 +259,9 @@ fun MessageCardArchive(itemMessage: ItemMessage, navController: NavController) {
                 ) {
                     Text(
                         text = "Nama: ${itemMessage.nama}",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = Color.Black,
-                        fontSize = 20.sp
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 15.sp
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))

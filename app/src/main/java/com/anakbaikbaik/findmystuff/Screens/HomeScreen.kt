@@ -35,6 +35,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -227,7 +228,22 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
         modifier = Modifier.padding(top = 64.dp, bottom = 80.dp)
     ) {
         items(messages) { message ->
-            MessageCard(message, navController)
+
+            roleViewModel?.retrieveData()
+            val currentSession by roleViewModel!!.currentSession.collectAsState()
+
+            // Display data from the observed 'currentSession' in your UI
+            currentSession?.let { session ->
+//                Column {
+//                    Text("Email: ${session.email ?: "N/A"}")
+//                    Text("User ID: ${session.userId ?: "N/A"}")
+//                    Text("Role: ${session.role ?: "N/A"}")
+//                }
+                MessageCard(message, navController, session.role)
+//                Text(text = session.role)
+            }
+
+
             // Display user information
 //            viewModel?.currentUser?.let { user ->
 //                Text("Username: ${user.displayName ?: "N/A"}")
@@ -244,24 +260,12 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
 //            ){
 //                Text(text = "Logout")
 //            }
-
-//            roleViewModel?.retrieveData()
-//            val currentSession by roleViewModel!!.currentSession.collectAsState()
-//
-//            // Display data from the observed 'currentSession' in your UI
-//            currentSession?.let { session ->
-//                Column {
-//                    Text("Email: ${session.email ?: "N/A"}")
-//                    Text("User ID: ${session.userId ?: "N/A"}")
-//                    Text("Role: ${session.role ?: "N/A"}")
-//                }
-//            }
         }
     }
 }
 
 @Composable
-fun MessageCard(itemMessage: ItemMessage, navController: NavController) {
+fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole: String?) {
     val context = LocalContext.current
     Log.d("Image URL", itemMessage.gambar)
 
@@ -313,22 +317,25 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController) {
             }
         }
         Row (
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .padding(bottom = 15.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Column {
-                PrimaryTextButton(
-                    text = stringResource(id = R.string.editButton),
-                    onClick = {
-                        navController.navigate(Screen.EditScreen.route)
+            if(userRole == "1") {
+                Column {
+                    PrimaryTextButton(
+                        text = stringResource(id = R.string.editButton),
+                        onClick = {
+                            navController.navigate(Screen.EditScreen.route)
+                        }
+                    )
+                }
+                Column {
+                    RedTextButton(
+                        text = stringResource(id = R.string.deleteButton)
+                    ) {
+                        navController.navigate("${Screen.DeleteScreen.route}/${itemMessage.id}")
                     }
-                )
-            }
-            Column {
-                RedTextButton(
-                    text = stringResource(id = R.string.deleteButton)
-                ) {
-                    navController.navigate("${Screen.DeleteScreen.route}/${itemMessage.id}")
                 }
             }
         }

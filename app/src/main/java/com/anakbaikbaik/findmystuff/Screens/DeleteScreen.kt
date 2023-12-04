@@ -1,7 +1,5 @@
 package com.anakbaikbaik.findmystuff.Screens
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +39,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
@@ -155,17 +157,17 @@ fun DeleteArea(navController: NavController, itemId: String?) {
 //        var imageUri by remember { mutableStateOf<Uri?>(null) }
         val context = LocalContext.current
 
-        val cameraPermissionLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission granted, launch camera
-                camera(context)
-            } else {
-                // Permission denied, handle accordingly
-                println("Camera permission denied")
-            }
-        }
+//        val cameraPermissionLauncher = rememberLauncherForActivityResult(
+//            contract = ActivityResultContracts.RequestPermission()
+//        ) { isGranted: Boolean ->
+//            if (isGranted) {
+//                // Permission granted, launch camera
+//                camera(context)
+//            } else {
+//                // Permission denied, handle accordingly
+//                println("Camera permission denied")
+//            }
+//        }
 
 //        val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
 //            contract = ActivityResultContracts.TakePicture()
@@ -177,6 +179,20 @@ fun DeleteArea(navController: NavController, itemId: String?) {
 //                println("Image capture canceled or unsuccessful")
 //            }
 //        }
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            text = "Hapus Barang",
+            style = TextStyle(
+                fontSize = 30.sp,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Bold,
+//                color = warnaUMN
+            )
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
 
 //        imageUri?.let { uri ->
 //            Image(
@@ -257,7 +273,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
 //            }
 //        }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),

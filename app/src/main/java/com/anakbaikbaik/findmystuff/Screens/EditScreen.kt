@@ -13,8 +13,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -51,7 +53,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -189,6 +195,20 @@ fun EditArea(navController: NavController) {
             }
         }
 
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            text = "Edit Barang",
+            style = TextStyle(
+                fontSize = 30.sp,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Bold,
+//                color = warnaUMN
+            )
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
         imageUri?.let { uri ->
             Image(
                 painter = rememberAsyncImagePainter(model = uri),
@@ -220,10 +240,12 @@ fun EditArea(navController: NavController) {
             label = { Text("Deskripsi") }
         )
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .padding(30.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             FloatingActionButton(
+                containerColor = Color.White,
                 onClick = {
                     if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                         val hasPermission = ContextCompat.checkSelfPermission(
@@ -251,6 +273,7 @@ fun EditArea(navController: NavController) {
                 )
             }
             FloatingActionButton(
+                containerColor = Color.White,
                 onClick = {
                     // Launch the gallery intent to select an image
                     galleryLauncher.launch("image/*")
