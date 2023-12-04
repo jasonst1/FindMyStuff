@@ -13,8 +13,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -51,22 +53,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
+import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
-import com.anakbaikbaik.findmystuff.ui.theme.topBar
+import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AddScreen(navController: NavController) {
+fun AddScreen(viewModel: AuthViewModel?, navController: NavController) {
     val items = listOf(
         BottomNavigationItem(
             title = "HomeScreen",
@@ -101,7 +108,7 @@ fun AddScreen(navController: NavController) {
         contentColor = MaterialTheme.colorScheme.onBackground,
         content = {
             Scaffold(
-                topBar = { topBar() },
+                topBar = { TopBarWithLogout(viewModel, navController) },
                 content = {it
                     AddArea(navController)
                 },
@@ -132,7 +139,7 @@ fun AddScreen(navController: NavController) {
                                     ) {
                                         Icon(
                                             imageVector = if (index == selectedItemIndex) {
-                                                item.selectedIcon
+                                                item.unselectedIcon
                                             } else item.unselectedIcon,
                                             contentDescription = item.title
                                         )
@@ -188,6 +195,20 @@ fun AddArea(navController: NavController) {
             }
         }
 
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            text = "Tambah Barang",
+            style = TextStyle(
+                fontSize = 30.sp,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Bold,
+//                color = warnaUMN
+            )
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
         imageUri?.let { uri ->
             Image(
                 painter = rememberAsyncImagePainter(model = uri),
@@ -219,10 +240,12 @@ fun AddArea(navController: NavController) {
             label = { Text("Deskripsi") }
         )
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .padding(30.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             FloatingActionButton(
+                containerColor = Color.White,
                 onClick = {
                     if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                         val hasPermission = ContextCompat.checkSelfPermission(
@@ -250,19 +273,19 @@ fun AddArea(navController: NavController) {
                 )
             }
             FloatingActionButton(
-                        onClick = {
-                            // Launch the gallery intent to select an image
-                            galleryLauncher.launch("image/*")
-                        },
-                        modifier = Modifier
-                            .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.folder),
-                            contentDescription = null
-                        )
-                    }
-                }
+                containerColor = Color.White,
+                onClick = {
+                    // Launch the gallery intent to select an image
+                    galleryLauncher.launch("image/*")
+                    },
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.folder),
+                    contentDescription = null
+                )}
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
