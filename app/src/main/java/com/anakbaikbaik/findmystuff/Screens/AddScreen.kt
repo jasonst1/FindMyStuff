@@ -1,14 +1,22 @@
 package com.anakbaikbaik.findmystuff.Screens
 
 import android.Manifest
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
+import android.provider.MediaStore.Images.Media
+import android.util.Log
+import android.webkit.MimeTypeMap
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -62,6 +70,8 @@ import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.storage
 
 
 @Composable
@@ -201,6 +211,7 @@ fun AddArea(navController: NavController) {
             contract = ActivityResultContracts.GetContent(),
             onResult = { result: Uri? ->
                 imageUri = result
+                getFileExtension(imageUri, context)
             }
         )
         OutlinedTextField(
@@ -250,12 +261,12 @@ fun AddArea(navController: NavController) {
                 )
             }
             FloatingActionButton(
-                        onClick = {
-                            // Launch the gallery intent to select an image
-                            galleryLauncher.launch("image/*")
-                        },
-                        modifier = Modifier
-                            .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                    onClick = {
+                        // Launch the gallery intent to select an image
+                        galleryLauncher.launch("image/*")
+                    },
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.folder),
@@ -280,34 +291,52 @@ fun AddArea(navController: NavController) {
                     text = stringResource(id = R.string.approveButton)
                 ) {
                     // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
-                    if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
-                        // Inisialisasi Firebase Firestore
-                        val db = Firebase.firestore
-
-                        // Membuat objek data
-                        val itemData = hashMapOf(
-                            "nama" to nama,
-                            "lokasi" to lokasi,
-                            "deskripsi" to deskripsi,
-                            "status" to "true",
-                            "gambar" to imageUri.toString(),
-                        )
-
-                        // Menambahkan data ke koleksi "items"
-                        db.collection("items")
-                            .add(itemData)
-                            .addOnSuccessListener {
-                                // Handle sukses (opsional)
-                                navController.navigate(Screen.HomeScreen.route)
-                            }
-                            .addOnFailureListener {
-                                // Handle gagal (opsional)
-                                // Anda dapat menampilkan pesan kesalahan atau mencatat pesan kesalahan
-                            }
-                    }
+                    uploadToDb(nama, lokasi, deskripsi, imageUri, navController)
                 }
             }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.P)
+fun getFileExtension(uri : Uri?, context: Context){
+    val storage = Firebase.storage
+    val ref = storage.reference.child(System.currentTimeMillis().toString())
+    uri?.let {
+        ref.putFile(it).addOnSuccessListener {taskSnapshot->
+            ref.downloadUrl.addOnSuccessListener { uri->
+                val downloadUrl = uri.toString()
+                Log.d("HEHEHE", downloadUrl)
+            }
+        }
+    }
+}
+
+fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Uri?, navController: NavController){
+    if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
+        // Inisialisasi Firebase Firestore
+        val db = Firebase.firestore
+
+        // Membuat objek data
+        val itemData = hashMapOf(
+            "nama" to nama,
+            "lokasi" to lokasi,
+            "deskripsi" to deskripsi,
+            "status" to "true",
+            "gambar" to imageUri.toString(),
+        )
+
+        // Menambahkan data ke koleksi "items"
+        db.collection("items")
+            .add(itemData)
+            .addOnSuccessListener {
+                // Handle sukses (opsional)
+                navController.navigate(Screen.HomeScreen.route)
+            }
+            .addOnFailureListener {
+                // Handle gagal (opsional)
+                // Anda dapat menampilkan pesan kesalahan atau mencatat pesan kesalahan
+            }
     }
 }
 
