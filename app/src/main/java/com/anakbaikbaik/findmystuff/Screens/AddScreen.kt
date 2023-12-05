@@ -211,7 +211,7 @@ fun AddArea(navController: NavController) {
             contract = ActivityResultContracts.GetContent(),
             onResult = { result: Uri? ->
                 imageUri = result
-                getFileExtension(imageUri, context)
+//                getFileExtension(imageUri, context)
             }
         )
         OutlinedTextField(
@@ -298,45 +298,52 @@ fun AddArea(navController: NavController) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
-fun getFileExtension(uri : Uri?, context: Context){
-    val storage = Firebase.storage
-    val ref = storage.reference.child(System.currentTimeMillis().toString())
-    uri?.let {
-        ref.putFile(it).addOnSuccessListener {taskSnapshot->
-            ref.downloadUrl.addOnSuccessListener { uri->
-                val downloadUrl = uri.toString()
-                Log.d("HEHEHE", downloadUrl)
-            }
-        }
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.P)
+//fun getFileExtension(uri : Uri?, context: Context){
+//
+//    uri?.let {
+//        ref.putFile(it).addOnSuccessListener {taskSnapshot->
+//            ref.downloadUrl.addOnSuccessListener { uri->
+//                val downloadUrl = uri.toString()
+//                Log.d("HEHEHE", downloadUrl)
+//            }
+//        }
+//    }
+//}
 
 fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Uri?, navController: NavController){
     if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
         // Inisialisasi Firebase Firestore
         val db = Firebase.firestore
+        val storage = Firebase.storage
+        val ref = storage.reference.child(System.currentTimeMillis().toString())
+        var downloadUrl = ""
 
-        // Membuat objek data
-        val itemData = hashMapOf(
-            "nama" to nama,
-            "lokasi" to lokasi,
-            "deskripsi" to deskripsi,
-            "status" to "true",
-            "gambar" to imageUri.toString(),
-        )
+        imageUri?.let {
+            ref.putFile(it).addOnSuccessListener {taskSnapshot->
+                ref.downloadUrl.addOnSuccessListener { uri->
+                    downloadUrl = uri.toString()
+                    // Membuat objek data
+                    val itemData = hashMapOf(
+                        "nama" to nama,
+                        "lokasi" to lokasi,
+                        "deskripsi" to deskripsi,
+                        "status" to "true",
+                        "gambar" to downloadUrl
+                    )
 
-        // Menambahkan data ke koleksi "items"
-        db.collection("items")
-            .add(itemData)
-            .addOnSuccessListener {
-                // Handle sukses (opsional)
-                navController.navigate(Screen.HomeScreen.route)
+                    // Menambahkan data ke koleksi "items"
+                    db.collection("items")
+                        .add(itemData)
+                        .addOnSuccessListener {
+                            // Handle sukses (opsional)
+                            navController.navigate(Screen.HomeScreen.route)
+                        }
+                        .addOnFailureListener {
+                        }
+                }
             }
-            .addOnFailureListener {
-                // Handle gagal (opsional)
-                // Anda dapat menampilkan pesan kesalahan atau mencatat pesan kesalahan
-            }
+        }
     }
 }
 
