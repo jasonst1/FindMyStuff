@@ -173,7 +173,7 @@ fun AddArea(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .padding(top = 100.dp),
+            .padding(top = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         var nama by remember { mutableStateOf("") }
@@ -205,8 +205,6 @@ fun AddArea(navController: NavController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
-
         Text(
             text = "Tambah Barang",
             style = TextStyle(
@@ -216,8 +214,6 @@ fun AddArea(navController: NavController) {
 //                color = warnaUMN
             )
         )
-
-        Spacer(modifier = Modifier.height(40.dp))
 
         imageUri?.let { uri ->
             Image(
