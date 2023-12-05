@@ -31,19 +31,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.anakbaikbaik.findmystuff.Data.Resource
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
+import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 
 @Composable
 fun LandingScreen(navController: NavController, viewModel: AuthViewModel?){
@@ -66,7 +66,10 @@ fun LandingScreen(navController: NavController, viewModel: AuthViewModel?){
 fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
         val authResource = viewModel?.loginFlow?.collectAsState()
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             ClickableText(
                 text = AnnotatedString("Sign up"),
                 modifier = Modifier
@@ -83,7 +86,7 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
             )
         }
         Column(
-            modifier = Modifier.padding(top = 100.dp),
+            modifier = Modifier.padding(top = 170.dp, bottom = 50.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -92,17 +95,25 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
             val password = remember { mutableStateOf(TextFieldValue()) }
 
             Text(
-                text = "Welcome",
-                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
+                text = "Log In",
+//                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
+                style = TextStyle(
+                    fontSize = 40.sp,
+                    fontFamily = FontFamily.SansSerif,
+                    fontWeight = FontWeight.Bold,
+                    color = warnaUMN
+                )
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
+
             TextField(
                 label = { Text(text = "email") },
                 value = email.value,
                 onValueChange = { email.value = it })
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
+
             TextField(
                 label = { Text(text = "Password") },
                 value = password.value,
@@ -110,7 +121,8 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 onValueChange = { password.value = it })
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
+
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                 Button(
                     onClick = {

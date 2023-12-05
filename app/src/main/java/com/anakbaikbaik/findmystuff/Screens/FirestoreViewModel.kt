@@ -22,12 +22,15 @@ class FirestoreViewModel : ViewModel() {
             .addOnSuccessListener { result ->
                 val itemMessagesList = mutableListOf<ItemMessage>()
                 for (document in result) {
+                    val id = document.id
                     val nama = document.getString("nama") ?: ""
                     val lokasi = document.getString("lokasi") ?: ""
                     val deskripsi = document.getString("deskripsi") ?: ""
                     val status = document.getString("status") ?: ""
                     val gambar = document.getString("gambar") ?: ""
-                    itemMessagesList.add(ItemMessage(nama, lokasi, deskripsi, status, gambar))
+                    val pengambil = document.getString("pengambil") ?: ""
+                    val nim = document.getString("nim") ?: ""
+                    itemMessagesList.add(ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, nim))
                 }
                 _itemMessages.value = itemMessagesList
             }
