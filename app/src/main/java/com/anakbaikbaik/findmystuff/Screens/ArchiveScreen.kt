@@ -89,9 +89,11 @@ fun ArchiveScreen(viewModel: AuthViewModel?, navController: NavController, fires
                     val status = document.getString("status") ?: ""
                     val gambar = document.getString("gambar") ?: ""
                     val pengambil = document.getString("pengambil") ?: ""
+                    val gambarPengambil = document.getString("gambarPengambil") ?: ""
                     val nim = document.getString("nim") ?: ""
+                    val tanggal = document.getString("tanggal") ?: ""
 
-                    ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, nim)
+                    ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, gambarPengambil, nim, tanggal)
                 } catch (e: Exception) {
                     // Handle parsing error here
                     null

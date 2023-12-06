@@ -183,7 +183,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
         Spacer(modifier = Modifier.height(40.dp))
 
         Text(
-            text = "Hapus Barang",
+            text = "Klaim Barang",
             style = TextStyle(
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif,

@@ -5,10 +5,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -70,6 +72,8 @@ import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -158,6 +162,7 @@ fun AddScreen(viewModel: AuthViewModel?, navController: NavController) {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddArea(navController: NavController) {
     Column(
@@ -218,8 +223,8 @@ fun AddArea(navController: NavController) {
                 contentScale = ContentScale.Crop
             )
         }
-       
-        Spacer(modifier = Modifier.height(10.dp)) 
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
@@ -328,6 +333,7 @@ fun AddArea(navController: NavController) {
 //    }
 //}
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Uri?, navController: NavController){
     if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
         // Inisialisasi Firebase Firestore
@@ -335,6 +341,9 @@ fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Ur
         val storage = Firebase.storage
         val ref = storage.reference.child(System.currentTimeMillis().toString())
         var downloadUrl = ""
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        val current = LocalDateTime.now().format(formatter)
 
         imageUri?.let {
             ref.putFile(it).addOnSuccessListener {taskSnapshot->
@@ -346,7 +355,8 @@ fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Ur
                         "lokasi" to lokasi,
                         "deskripsi" to deskripsi,
                         "status" to "true",
-                        "gambar" to downloadUrl
+                        "gambar" to downloadUrl,
+                        "tanggal" to current
                     )
 
                     // Menambahkan data ke koleksi "items"
