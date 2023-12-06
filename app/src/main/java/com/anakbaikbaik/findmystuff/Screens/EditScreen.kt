@@ -68,12 +68,13 @@ import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
 
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun EditScreen(viewModel: AuthViewModel?, navController: NavController) {
+fun EditScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavController) {
     val items = listOf(
         BottomNavigationItem(
             title = "HomeScreen",
@@ -110,7 +111,7 @@ fun EditScreen(viewModel: AuthViewModel?, navController: NavController) {
             Scaffold(
                 topBar = { TopBarWithLogout(viewModel, navController) },
                 content = {it
-                    EditArea(navController)
+                    EditArea(navController, itemId)
                 },
                 bottomBar = {
                     NavigationBar(
@@ -158,7 +159,7 @@ fun EditScreen(viewModel: AuthViewModel?, navController: NavController) {
 }
 
 @Composable
-fun EditArea(navController: NavController) {
+fun EditArea(navController: NavController, itemId: String?) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -318,16 +319,19 @@ fun EditArea(navController: NavController) {
                         )
 
                         // Menambahkan data ke koleksi "items"
-                        db.collection("items")
-                            .add(itemData)
-                            .addOnSuccessListener {
-                                // Handle sukses (opsional)
-                                navController.navigate(Screen.HomeScreen.route)
-                            }
-                            .addOnFailureListener {
-                                // Handle gagal (opsional)
-                                // Anda dapat menampilkan pesan kesalahan atau mencatat pesan kesalahan
-                            }
+                        if (itemId != null) {
+                            db.collection("items")
+                                .document(itemId)
+                                .set(itemData, SetOptions.merge())
+                                .addOnSuccessListener {
+                                    // Handle sukses (opsional)
+                                    navController.navigate(Screen.HomeScreen.route)
+                                }
+                                .addOnFailureListener {
+                                    // Handle gagal (opsional)
+                                    // Anda dapat menampilkan pesan kesalahan atau mencatat pesan kesalahan
+                                }
+                        }
                     }
                 }
             }
