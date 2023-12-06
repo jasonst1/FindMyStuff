@@ -80,7 +80,9 @@ data class ItemMessage(
     val status: String,
     val gambar: String,
     val pengambil: String,
-    val nim: String
+    val gambarPengambil: String,
+    val nim: String,
+    val tanggal: String,
 )
 
 @Composable
@@ -118,9 +120,11 @@ fun HomeScreen(
                     val status = document.getString("status") ?: ""
                     val gambar = document.getString("gambar") ?: ""
                     val pengambil = document.getString("pengambil") ?: ""
+                    val gambarPengambil = document.getString("gambarPengambil") ?: ""
                     val nim = document.getString("nim") ?: ""
+                    val tanggal = document.getString("tanggal") ?: ""
 
-                    ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, nim)
+                    ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, gambarPengambil, nim, tanggal)
                 } catch (e: Exception) {
                     // Handle parsing error here
                     null
@@ -224,10 +228,12 @@ fun HomeScreen(
 
 @Composable
 fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navController: NavController, roleViewModel: RoleViewModel?) {
+    val sortedMessages = messages.sortedByDescending { it.tanggal }
+
     LazyColumn (
         modifier = Modifier.padding(top = 64.dp, bottom = 80.dp)
     ) {
-        items(messages) { message ->
+        items(sortedMessages) { message ->
 
             roleViewModel?.retrieveData()
             val currentSession by roleViewModel!!.currentSession.collectAsState()
@@ -309,7 +315,10 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "ID : ${itemMessage.id}\nLokasi : ${itemMessage.lokasi}\nDeskripsi : ${itemMessage.deskripsi}",
+                    text = "ID : ${itemMessage.id}\n" +
+                            "Tanggal : ${itemMessage.tanggal}\n" +
+                            "Lokasi : ${itemMessage.lokasi}\n" +
+                            "Deskripsi : ${itemMessage.deskripsi}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 15.sp
