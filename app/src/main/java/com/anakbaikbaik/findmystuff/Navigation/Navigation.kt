@@ -37,8 +37,12 @@ fun Navigation(
         composable(route = Screen.ArchiveScreen.route){
             ArchiveScreen(viewModel = viewModel, navController = navController, firestoreViewModel = firestoreViewModel)
         }
-        composable(route = Screen.EditScreen.route){
-             EditScreen(viewModel = viewModel, navController = navController)
+        composable(
+            route = "${Screen.EditScreen.route}/{itemId}",
+            arguments = listOf(navArgument("itemId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getString("itemId")
+            EditScreen(viewModel = viewModel, itemId = itemId, navController = navController)
         }
         composable(route = Screen.AddScreen.route) {
             AddScreen(viewModel = viewModel, navController = navController)
@@ -56,6 +60,5 @@ fun Navigation(
             val itemId = backStackEntry.arguments?.getString("itemId")
             DeleteScreen(viewModel = viewModel, itemId = itemId, navController = navController)
         }
-
     }
 }

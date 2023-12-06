@@ -13,7 +13,6 @@ import com.anakbaikbaik.findmystuff.Navigation.Navigation
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         FirebaseApp.initializeApp(this)
-        val db = FirebaseFirestore.getInstance()
+//        val db = FirebaseFirestore.getInstance()
         super.onCreate(savedInstanceState)
         setContent {
             Navigation(viewModel, roleViewModel)
