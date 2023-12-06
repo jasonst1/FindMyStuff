@@ -218,6 +218,8 @@ fun AddArea(navController: NavController) {
                 contentScale = ContentScale.Crop
             )
         }
+       
+        Spacer(modifier = Modifier.height(10.dp)) 
 
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
@@ -242,8 +244,9 @@ fun AddArea(navController: NavController) {
             label = { Text("Deskripsi") }
         )
         Row(
-            modifier = Modifier.fillMaxWidth()
-                .padding(30.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             FloatingActionButton(
@@ -267,7 +270,7 @@ fun AddArea(navController: NavController) {
                         println("Device does not have a camera")
                     }
                 },
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 10.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.camera),
@@ -281,7 +284,7 @@ fun AddArea(navController: NavController) {
                     galleryLauncher.launch("image/*")
                     },
                     modifier = Modifier
-                        .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                        .padding(start = 16.dp, top = 10.dp, bottom = 16.dp)
                 ) {
                 Icon(
                     painter = painterResource(id = R.drawable.folder),

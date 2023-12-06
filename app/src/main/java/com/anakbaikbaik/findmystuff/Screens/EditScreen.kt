@@ -70,6 +70,7 @@ import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.storage
 
 
 @Composable
@@ -219,6 +220,8 @@ fun EditArea(navController: NavController, itemId: String?) {
             )
         }
 
+        Spacer(modifier = Modifier.height(10.dp))
+
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
             onResult = { result: Uri? ->
@@ -242,7 +245,7 @@ fun EditArea(navController: NavController, itemId: String?) {
         )
         Row(
             modifier = Modifier.fillMaxWidth()
-                .padding(30.dp),
+                .padding(10.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             FloatingActionButton(
@@ -266,7 +269,7 @@ fun EditArea(navController: NavController, itemId: String?) {
                         println("Device does not have a camera")
                     }
                 },
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 10.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.camera),
@@ -280,7 +283,7 @@ fun EditArea(navController: NavController, itemId: String?) {
                     galleryLauncher.launch("image/*")
                 },
                 modifier = Modifier
-                    .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                    .padding(start = 16.dp, top = 10.dp, bottom = 16.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.folder),
@@ -304,34 +307,44 @@ fun EditArea(navController: NavController, itemId: String?) {
                 GreenTextButton(
                     text = stringResource(id = R.string.approveButton)
                 ) {
-                    // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
-                    if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
-                        // Inisialisasi Firebase Firestore
-                        val db = Firebase.firestore
+                    editToDb(nama, lokasi, deskripsi, imageUri, navController, itemId)
+                }
+            }
+        }
+    }
+}
+fun editToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Uri?, navController: NavController, itemId: String?){
+    if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
+        // Inisialisasi Firebase Firestore
+        val db = Firebase.firestore
+        val storage = Firebase.storage
+        val ref = storage.reference.child(System.currentTimeMillis().toString())
+        var downloadUrl = ""
 
-                        // Membuat objek data
-                        val itemData = hashMapOf(
-                            "nama" to nama,
-                            "lokasi" to lokasi,
-                            "deskripsi" to deskripsi,
-                            "status" to "true",
-                            "gambar" to imageUri.toString(),
-                        )
+        imageUri?.let {
+            ref.putFile(it).addOnSuccessListener {taskSnapshot->
+                ref.downloadUrl.addOnSuccessListener { uri->
+                    downloadUrl = uri.toString()
+                    // Membuat objek data
+                    val itemData = hashMapOf(
+                        "nama" to nama,
+                        "lokasi" to lokasi,
+                        "deskripsi" to deskripsi,
+                        "status" to "true",
+                        "gambar" to downloadUrl
+                    )
 
-                        // Menambahkan data ke koleksi "items"
-                        if (itemId != null) {
-                            db.collection("items")
-                                .document(itemId)
-                                .set(itemData, SetOptions.merge())
-                                .addOnSuccessListener {
-                                    // Handle sukses (opsional)
-                                    navController.navigate(Screen.HomeScreen.route)
-                                }
-                                .addOnFailureListener {
-                                    // Handle gagal (opsional)
-                                    // Anda dapat menampilkan pesan kesalahan atau mencatat pesan kesalahan
-                                }
-                        }
+                    // Menambahkan data ke koleksi "items"
+                    if (itemId != null) {
+                        db.collection("items")
+                            .document(itemId)
+                            .set(itemData, SetOptions.merge())
+                            .addOnSuccessListener {
+                                // Handle sukses (opsional)
+                                navController.navigate(Screen.HomeScreen.route)
+                            }
+                            .addOnFailureListener {
+                            }
                     }
                 }
             }

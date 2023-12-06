@@ -326,7 +326,7 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
                     PrimaryTextButton(
                         text = stringResource(id = R.string.editButton),
                         onClick = {
-                            navController.navigate(Screen.EditScreen.route)
+                            navController.navigate("${Screen.EditScreen.route}/${itemMessage.id}")
                         }
                     )
                 }
