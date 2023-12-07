@@ -66,6 +66,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
+import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
@@ -76,9 +77,10 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun AddScreen(viewModel: AuthViewModel?, navController: NavController) {
+fun AddScreen(viewModel: AuthViewModel?, navController: NavController, roleViewModel: RoleViewModel?) {
     val items = listOf(
         BottomNavigationItem(
             title = "HomeScreen",
@@ -123,6 +125,10 @@ fun AddScreen(viewModel: AuthViewModel?, navController: NavController) {
                         containerColor = Color.White
                     ) {
                         items.forEachIndexed{ index, item ->
+                            if (item.title == "AddScreen" && roleViewModel?.currentSession?.value?.role != "1") {
+                                // Skip this item if it's "AddScreen" and the user's role is not 1
+                                return@forEachIndexed
+                            }
                             NavigationBarItem(
                                 selected = selectedItemIndex == index,
                                 onClick = {

@@ -188,6 +188,10 @@ fun HomeScreen(
                     containerColor = Color.White
                 ) {
                     items.forEachIndexed{ index, item ->
+                        if (item.title == "AddScreen" && roleViewModel?.currentSession?.value?.role != "1") {
+                            // Skip this item if it's "AddScreen" and the user's role is not 1
+                            return@forEachIndexed
+                        }
                         NavigationBarItem(
                             selected = selectedItemIndex == index,
                             onClick = {
