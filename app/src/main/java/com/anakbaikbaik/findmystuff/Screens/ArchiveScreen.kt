@@ -53,6 +53,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
+import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
@@ -60,7 +61,7 @@ import com.google.firebase.firestore.firestore
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ArchiveScreen(viewModel: AuthViewModel?, navController: NavController, firestoreViewModel: AuthViewModel?) {
+fun ArchiveScreen(viewModel: AuthViewModel?, navController: NavController, firestoreViewModel: AuthViewModel?, roleViewModel: RoleViewModel?) {
     var itemMessages by remember {
         mutableStateOf<List<ItemMessage>>(emptyList())
     }
@@ -157,6 +158,10 @@ fun ArchiveScreen(viewModel: AuthViewModel?, navController: NavController, fires
                     containerColor = Color.White
                 ) {
                     items.forEachIndexed{ index, item ->
+                        if (item.title == "AddScreen" && roleViewModel?.currentSession?.value?.role != "1") {
+                            // Skip this item if it's "AddScreen" and the user's role is not 1
+                            return@forEachIndexed
+                        }
                         NavigationBarItem(
                             selected = selectedItemIndex == index,
                             onClick = {

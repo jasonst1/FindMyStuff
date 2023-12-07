@@ -1,5 +1,7 @@
 package com.anakbaikbaik.findmystuff.Navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,6 +19,7 @@ import com.anakbaikbaik.findmystuff.Screens.SignUpScreen
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(
     viewModel: AuthViewModel,
@@ -35,17 +38,17 @@ fun Navigation(
             HomeScreen(viewModel = viewModel, navController = navController, firestoreViewModel = firestoreViewModel, roleViewModel = roleViewModel)
         }
         composable(route = Screen.ArchiveScreen.route){
-            ArchiveScreen(viewModel = viewModel, navController = navController, firestoreViewModel = firestoreViewModel)
+            ArchiveScreen(viewModel = viewModel, navController = navController, firestoreViewModel = firestoreViewModel, roleViewModel = roleViewModel)
         }
         composable(
             route = "${Screen.EditScreen.route}/{itemId}",
             arguments = listOf(navArgument("itemId") { type = NavType.StringType })
         ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getString("itemId")
-            EditScreen(viewModel = viewModel, itemId = itemId, navController = navController)
+            EditScreen(viewModel = viewModel, itemId = itemId, navController = navController, roleViewModel = roleViewModel)
         }
         composable(route = Screen.AddScreen.route) {
-            AddScreen(viewModel = viewModel, navController = navController)
+            AddScreen(viewModel = viewModel, navController = navController, roleViewModel = roleViewModel)
         }
         composable(route = Screen.SignUpScreen.route){
             SignUpScreen(viewModel = viewModel, navController = navController)
@@ -58,7 +61,7 @@ fun Navigation(
             arguments = listOf(navArgument("itemId") { type = NavType.StringType })
         ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getString("itemId")
-            DeleteScreen(viewModel = viewModel, itemId = itemId, navController = navController)
+            DeleteScreen(viewModel = viewModel, itemId = itemId, navController = navController, roleViewModel = roleViewModel)
         }
     }
 }

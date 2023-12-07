@@ -12,7 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Badge
@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
+import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
@@ -58,7 +59,7 @@ import com.google.firebase.firestore.firestore
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun DeleteScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavController) {
+fun DeleteScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavController, roleViewModel: RoleViewModel?) {
     val items = listOf(
         BottomNavigationItem(
             title = "HomeScreen",
@@ -67,9 +68,9 @@ fun DeleteScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavC
             hasNews = false,
         ),
         BottomNavigationItem(
-            title = "EditScreen",
+            title = "AddScreen",
             selectedIcon = Icons.Filled.Add,
-            unselectedIcon = Icons.Outlined.Edit,
+            unselectedIcon = Icons.Outlined.Add,
             hasNews = false,
         ),
         BottomNavigationItem(
@@ -103,6 +104,10 @@ fun DeleteScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavC
                         containerColor = Color.White
                     ) {
                         items.forEachIndexed{ index, item ->
+                            if (item.title == "AddScreen" && roleViewModel?.currentSession?.value?.role != "1") {
+                                // Skip this item if it's "AddScreen" and the user's role is not 1
+                                return@forEachIndexed
+                            }
                             NavigationBarItem(
                                 selected = selectedItemIndex == index,
                                 onClick = {
