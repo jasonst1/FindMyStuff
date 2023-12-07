@@ -1,12 +1,18 @@
 package com.anakbaikbaik.findmystuff.Screens
 
 import android.Manifest
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.database.Cursor
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,6 +67,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Navigation.Screen
@@ -69,11 +77,18 @@ import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
+import com.google.firebase.BuildConfig
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
+import java.io.File
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
+import java.util.Objects
+import kotlin.contracts.contract
 
 
 @Composable
@@ -175,8 +190,10 @@ fun AddArea(navController: NavController) {
         var nama by remember { mutableStateOf("") }
         var lokasi by remember { mutableStateOf("") }
         var deskripsi by remember { mutableStateOf("") }
-        var imageUri by remember { mutableStateOf<Uri?>(null) }
+        var imageUri by remember { mutableStateOf<Uri?>(Uri.EMPTY) }
         val context = LocalContext.current
+
+        var imageBitmap by remember{ mutableStateOf<Bitmap?>(null)}
 
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
@@ -194,8 +211,7 @@ fun AddArea(navController: NavController) {
             contract = ActivityResultContracts.TakePicture()
         ) { isSuccessful: Boolean ->
             if (isSuccessful) {
-                // Handle successful capture
-                // You can perform additional actions if needed
+                imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
             } else {
                 println("Image capture canceled or unsuccessful")
             }
@@ -215,9 +231,9 @@ fun AddArea(navController: NavController) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        imageUri?.let { uri ->
+        imageBitmap?.let { imageBitmap ->
             Image(
-                painter = rememberAsyncImagePainter(model = uri),
+                painter = rememberAsyncImagePainter(imageBitmap),
                 contentDescription = null,
                 modifier = Modifier.size(200.dp),
                 contentScale = ContentScale.Crop
@@ -265,7 +281,8 @@ fun AddArea(navController: NavController) {
 
                         if (hasPermission) {
                             // Permission granted, launch camera
-                            cameraLauncher.launch(getCapturedImageUri(context))
+                            imageUri = getCapturedImageUri(context)
+                            cameraLauncher.launch(imageUri)
                         } else {
                             // Request camera permission
                             cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
