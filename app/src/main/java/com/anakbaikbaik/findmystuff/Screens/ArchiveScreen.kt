@@ -50,11 +50,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.anakbaikbaik.findmystuff.NavBars.BottomNavBar
+import com.anakbaikbaik.findmystuff.NavBars.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
-import com.anakbaikbaik.findmystuff.ui.theme.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -114,34 +115,6 @@ fun ArchiveScreen(viewModel: AuthViewModel?, navController: NavController, fires
     // Bikin filter yang ditampilin hanya yang mana?
     val filteredItemMessages = itemMessages.filter { it.status == "false" }
 
-    val items = listOf(
-        BottomNavigationItem(
-            title = "HomeScreen",
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home,
-            hasNews = false,
-        ),
-        BottomNavigationItem(
-            title = "AddScreen",
-            selectedIcon = Icons.Filled.Add,
-            unselectedIcon = Icons.Outlined.Add,
-            hasNews = false,
-        ),
-        BottomNavigationItem(
-            title = "ArchiveScreen",
-            selectedIcon = Icons.Filled.Refresh,
-            unselectedIcon = Icons.Outlined.Refresh,
-            hasNews = false,
-        )
-    )
-    val screenMap = mapOf(
-        "HomeScreen" to Screen.HomeScreen,
-        "AddScreen" to Screen.AddScreen,
-        "ArchiveScreen" to Screen.ArchiveScreen
-    )
-    var selectedItemIndex by rememberSaveable {
-        mutableStateOf(0)
-    }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -154,47 +127,7 @@ fun ArchiveScreen(viewModel: AuthViewModel?, navController: NavController, fires
                 calling(viewModel, filteredItemMessages, navController)
             },
             bottomBar = {
-                NavigationBar(
-                    containerColor = Color.White
-                ) {
-                    items.forEachIndexed{ index, item ->
-                        if (item.title == "AddScreen" && roleViewModel?.currentSession?.value?.role != "1") {
-                            // Skip this item if it's "AddScreen" and the user's role is not 1
-                            return@forEachIndexed
-                        }
-                        NavigationBarItem(
-                            selected = selectedItemIndex == index,
-                            onClick = {
-                                selectedItemIndex = index
-                                screenMap[item.title]?.let { navController.navigate(it.route) }
-                            },
-                            alwaysShowLabel = false,
-                            icon = {
-                                BadgedBox(
-                                    badge = {
-                                        if(item.badgeCount != null) {
-                                            Badge {
-                                                Text(text = item.badgeCount.toString())
-                                            }
-                                        } else if(item.hasNews) {
-                                            Badge()
-                                        }
-                                    },
-                                ) {
-                                    Icon(
-                                        imageVector = if (index == selectedItemIndex) {
-                                            item.unselectedIcon
-                                        } else item.unselectedIcon,
-                                        contentDescription = item.title
-                                    )
-                                }
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                indicatorColor = colorResource(R.color.white)
-                            )
-                        )
-                    }
-                }
+                BottomNavBar(viewModel, navController, roleViewModel)
             }
         )
     }
