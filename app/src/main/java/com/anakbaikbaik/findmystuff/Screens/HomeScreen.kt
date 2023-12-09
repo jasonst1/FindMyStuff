@@ -184,6 +184,7 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
     } else {
         messages
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -251,7 +252,7 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
     val context = LocalContext.current
     Log.d("Image URL", itemMessage.gambar)
 
-    Column (
+    Column(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
@@ -260,11 +261,11 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
             )
             .border(1.dp, Color.Black)
     ) {
-        Row (
+        Row(
             modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Column (
+            Column(
                 modifier = Modifier
                     .background(color = warnaUMN)
             ) {
@@ -278,7 +279,7 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
             }
         }
         Row {
-            Column (
+            Column(
                 modifier = Modifier.padding(15.dp),
             ) {
                 Text(
@@ -301,13 +302,13 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
                 )
             }
         }
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 15.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            if(userRole == "1") {
+            if (userRole == "1") {
                 Column {
                     PrimaryTextButton(
                         text = stringResource(id = R.string.editButton),
@@ -326,8 +327,4 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
             }
         }
     }
-}
-
-fun messageSearch(){
-
 }
