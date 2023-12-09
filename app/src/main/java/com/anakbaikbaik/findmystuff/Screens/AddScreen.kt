@@ -275,19 +275,6 @@ fun AddArea(navController: NavController) {
     }
 }
 
-//@RequiresApi(Build.VERSION_CODES.P)
-//fun getFileExtension(uri : Uri?, context: Context){
-//
-//    uri?.let {
-//        ref.putFile(it).addOnSuccessListener {taskSnapshot->
-//            ref.downloadUrl.addOnSuccessListener { uri->
-//                val downloadUrl = uri.toString()
-//                Log.d("HEHEHE", downloadUrl)
-//            }
-//        }
-//    }
-//}
-
 @RequiresApi(Build.VERSION_CODES.O)
 fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Uri?, navController: NavController){
     if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {

@@ -128,7 +128,6 @@ fun DeleteArea(navController: NavController, itemId: String?) {
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
-//                color = warnaUMN
             )
         )
 
@@ -154,6 +153,9 @@ fun DeleteArea(navController: NavController, itemId: String?) {
 //        if (itemId != null) {
 //            Text(text = itemId)
 //        }
+
+        Spacer(modifier = Modifier.height(40.dp))
+
         OutlinedTextField(
             value = pengambil,
             onValueChange = { value -> pengambil = value },
@@ -164,6 +166,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
             onValueChange = { value -> nim = value },
             label = { Text("Nomor Induk Mahasiswa") }
         )
+
 //        OutlinedTextField(
 //            value = deskripsi,
 //            onValueChange = { value -> deskripsi = value },

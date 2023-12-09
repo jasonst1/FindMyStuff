@@ -1,7 +1,7 @@
 package com.anakbaikbaik.findmystuff.ViewModel
 
 import androidx.lifecycle.ViewModel
-import com.anakbaikbaik.findmystuff.Screens.ItemMessage
+import com.anakbaikbaik.findmystuff.Model.ItemMessage
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
