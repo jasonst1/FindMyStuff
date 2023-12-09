@@ -3,6 +3,10 @@ package com.anakbaikbaik.findmystuff.Navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,9 +32,14 @@ fun Navigation(
     val viewModel: AuthViewModel? = viewModel
     val firestoreViewModel: AuthViewModel? = viewModel
     val roleViewModel: RoleViewModel = roleViewModel
+    var startDestination by remember { mutableStateOf(if (viewModel?.currentUser != null) {
+        Screen.HomeScreen.route
+    } else {
+        Screen.LandingScreen.route
+    }) }
 
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.LandingScreen.route){
+    NavHost(navController = navController, startDestination = startDestination){
         composable(route = Screen.LandingScreen.route){
             LandingScreen(viewModel = viewModel, navController = navController)
         }
