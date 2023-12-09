@@ -69,7 +69,7 @@ fun TopBarWithLogout(viewModel: AuthViewModel?, navController: NavController) {
                 .width(100.dp)
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,
+                containerColor = Color.Red,
                 contentColor = Color.White
             )
         ) {

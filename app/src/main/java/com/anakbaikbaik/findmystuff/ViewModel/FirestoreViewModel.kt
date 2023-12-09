@@ -30,11 +30,11 @@ class FirestoreViewModel : ViewModel() {
                     val status = document.getString("status") ?: ""
                     val gambar = document.getString("gambar") ?: ""
                     val pengambil = document.getString("pengambil") ?: ""
-                    val gambarPengambil = document.getString("gambarPengambil") ?: ""
+                    val fotoPengambil = document.getString("fotoPengambil") ?: ""
                     val nim = document.getString("nim") ?: ""
                     val tanggal = document.getString("tanggal") ?: ""
 
-                    itemMessagesList.add(ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, gambarPengambil, nim, tanggal))
+                    itemMessagesList.add(ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, fotoPengambil, nim, tanggal))
                 }
                 _itemMessages.value = itemMessagesList
             }
