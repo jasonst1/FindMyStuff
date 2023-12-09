@@ -24,9 +24,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
+import com.anakbaikbaik.findmystuff.Model.BottomNavigationItem
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
-import com.anakbaikbaik.findmystuff.Screens.BottomNavigationItem
 import com.anakbaikbaik.findmystuff.Screens.MessageCard
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
