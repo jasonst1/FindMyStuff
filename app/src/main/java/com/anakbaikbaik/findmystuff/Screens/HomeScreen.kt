@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Refresh
@@ -30,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -96,6 +99,8 @@ fun HomeScreen(
     var itemMessages by remember {
         mutableStateOf<List<ItemMessage>>(emptyList())
     }
+
+    var searchQuery by remember { mutableStateOf("") }
 
     // Initialize Firebase Firestore
     val db = Firebase.firestore
@@ -167,27 +172,60 @@ fun HomeScreen(
 fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navController: NavController, roleViewModel: RoleViewModel?) {
     val sortedMessages = messages.sortedByDescending { it.tanggal }
 
-    LazyColumn (
-        modifier = Modifier.padding(top = 64.dp, bottom = 80.dp)
+    var searchQuery by remember { mutableStateOf("") }
+
+    val filteredMessages = if (searchQuery.isNotBlank()) {
+        messages.filter {
+            it.nama.contains(searchQuery, ignoreCase = true) ||
+                    it.lokasi.contains(searchQuery, ignoreCase = true) ||
+                    it.deskripsi.contains(searchQuery, ignoreCase = true)
+            // Add more fields to search if needed
+        }
+    } else {
+        messages
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 56.dp) // Adjust the top padding as needed
     ) {
-        items(sortedMessages) { message ->
+        Column {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+            LazyColumn(
+                modifier = Modifier.padding(top = 10.dp, bottom = 80.dp)
+            ) {
+                items(filteredMessages) { message ->
 
-            roleViewModel?.retrieveData()
-            val currentSession by roleViewModel!!.currentSession.collectAsState()
+                    roleViewModel?.retrieveData()
+                    val currentSession by roleViewModel!!.currentSession.collectAsState()
 
-            // Display data from the observed 'currentSession' in your UI
-            currentSession?.let { session ->
+                    // Display data from the observed 'currentSession' in your UI
+                    currentSession?.let { session ->
 //                Column {
 //                    Text("Email: ${session.email ?: "N/A"}")
 //                    Text("User ID: ${session.userId ?: "N/A"}")
 //                    Text("Role: ${session.role ?: "N/A"}")
 //                }
-                MessageCard(message, navController, session.role)
+                        MessageCard(message, navController, session.role)
 //                Text(text = session.role)
-            }
+                    }
 
 
-            // Display user information
+                    // Display user information
 //            viewModel?.currentUser?.let { user ->
 //                Text("Username: ${user.displayName ?: "N/A"}")
 //                Text("Email: ${user.email ?: "N/A"}")
@@ -203,6 +241,8 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
 //            ){
 //                Text(text = "Logout")
 //            }
+                }
+            }
         }
     }
 }
@@ -212,7 +252,7 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
     val context = LocalContext.current
     Log.d("Image URL", itemMessage.gambar)
 
-    Column (
+    Column(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
@@ -221,11 +261,11 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
             )
             .border(1.dp, Color.Black)
     ) {
-        Row (
+        Row(
             modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Column (
+            Column(
                 modifier = Modifier
                     .background(color = warnaUMN)
             ) {
@@ -239,7 +279,7 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
             }
         }
         Row {
-            Column (
+            Column(
                 modifier = Modifier.padding(15.dp),
             ) {
                 Text(
@@ -262,13 +302,13 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
                 )
             }
         }
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 15.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            if(userRole == "1") {
+            if (userRole == "1") {
                 Column {
                     PrimaryTextButton(
                         text = stringResource(id = R.string.editButton),
