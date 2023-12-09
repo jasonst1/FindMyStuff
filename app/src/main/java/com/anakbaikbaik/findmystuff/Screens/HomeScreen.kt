@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.anakbaikbaik.findmystuff.Model.ItemMessage
 import com.anakbaikbaik.findmystuff.NavBars.BottomNavBar
 import com.anakbaikbaik.findmystuff.NavBars.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.Navigation.Screen
@@ -67,27 +68,6 @@ import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-
-data class BottomNavigationItem(
-    val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val hasNews: Boolean,
-    val badgeCount: Int? = null
-)
-
-data class ItemMessage(
-    val id: String,
-    val nama: String,
-    val lokasi: String,
-    val deskripsi: String,
-    val status: String,
-    val gambar: String,
-    val pengambil: String,
-    val gambarPengambil: String,
-    val nim: String,
-    val tanggal: String,
-)
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -179,7 +159,6 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
             it.nama.contains(searchQuery, ignoreCase = true) ||
                     it.lokasi.contains(searchQuery, ignoreCase = true) ||
                     it.deskripsi.contains(searchQuery, ignoreCase = true)
-            // Add more fields to search if needed
         }
     } else {
         messages
@@ -215,32 +194,8 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
 
                     // Display data from the observed 'currentSession' in your UI
                     currentSession?.let { session ->
-//                Column {
-//                    Text("Email: ${session.email ?: "N/A"}")
-//                    Text("User ID: ${session.userId ?: "N/A"}")
-//                    Text("Role: ${session.role ?: "N/A"}")
-//                }
                         MessageCard(message, navController, session.role)
-//                Text(text = session.role)
                     }
-
-
-                    // Display user information
-//            viewModel?.currentUser?.let { user ->
-//                Text("Username: ${user.displayName ?: "N/A"}")
-//                Text("Email: ${user.email ?: "N/A"}")
-//            }
-
-//            Button(
-//                onClick = {
-//                    viewModel?.logout()
-//                    navController.navigate(Screen.LandingScreen.route) {
-//                        popUpTo(Screen.LandingScreen.route) { inclusive = true }
-//                    }
-//                }
-//            ){
-//                Text(text = "Logout")
-//            }
                 }
             }
         }
