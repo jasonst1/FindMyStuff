@@ -69,9 +69,6 @@ fun TopBarWithLogout(viewModel: AuthViewModel?, navController: NavController) {
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-
-                // Creating dropdown menu item, on click
-                // would create a Toast message
                 DropdownMenuItem(
                     text = { Text(text = "Logout")},
                     onClick = { viewModel?.logout()
