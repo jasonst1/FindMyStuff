@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -183,37 +184,47 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
     } else {
         messages
     }
-    Column {
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text("Search") },
-            leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = null) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
-        LazyColumn (
-            modifier = Modifier.padding(top = 10.dp, bottom = 80.dp)
-        ) {
-            items(filteredMessages) { message ->
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 56.dp) // Adjust the top padding as needed
+    ) {
+        Column {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+            LazyColumn(
+                modifier = Modifier.padding(top = 10.dp, bottom = 80.dp)
+            ) {
+                items(filteredMessages) { message ->
 
-                roleViewModel?.retrieveData()
-                val currentSession by roleViewModel!!.currentSession.collectAsState()
+                    roleViewModel?.retrieveData()
+                    val currentSession by roleViewModel!!.currentSession.collectAsState()
 
-                // Display data from the observed 'currentSession' in your UI
-                currentSession?.let { session ->
+                    // Display data from the observed 'currentSession' in your UI
+                    currentSession?.let { session ->
 //                Column {
 //                    Text("Email: ${session.email ?: "N/A"}")
 //                    Text("User ID: ${session.userId ?: "N/A"}")
 //                    Text("Role: ${session.role ?: "N/A"}")
 //                }
-                    MessageCard(message, navController, session.role)
+                        MessageCard(message, navController, session.role)
 //                Text(text = session.role)
-                }
+                    }
 
 
-                // Display user information
+                    // Display user information
 //            viewModel?.currentUser?.let { user ->
 //                Text("Username: ${user.displayName ?: "N/A"}")
 //                Text("Email: ${user.email ?: "N/A"}")
@@ -229,6 +240,7 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
 //            ){
 //                Text(text = "Logout")
 //            }
+                }
             }
         }
     }
