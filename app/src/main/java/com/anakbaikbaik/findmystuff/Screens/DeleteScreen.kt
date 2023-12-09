@@ -90,32 +90,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
     ) {
         var pengambil by remember { mutableStateOf("") }
         var nim by remember { mutableStateOf("") }
-//        var deskripsi by remember { mutableStateOf("") }
-//        var imageUri by remember { mutableStateOf<Uri?>(null) }
         val context = LocalContext.current
-
-//        val cameraPermissionLauncher = rememberLauncherForActivityResult(
-//            contract = ActivityResultContracts.RequestPermission()
-//        ) { isGranted: Boolean ->
-//            if (isGranted) {
-//                // Permission granted, launch camera
-//                camera(context)
-//            } else {
-//                // Permission denied, handle accordingly
-//                println("Camera permission denied")
-//            }
-//        }
-
-//        val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
-//            contract = ActivityResultContracts.TakePicture()
-//        ) { isSuccessful: Boolean ->
-//            if (isSuccessful) {
-//                // Handle successful capture
-//                // You can perform additional actions if needed
-//            } else {
-//                println("Image capture canceled or unsuccessful")
-//            }
-//        }
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -125,30 +100,10 @@ fun DeleteArea(navController: NavController, itemId: String?) {
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
-//                color = warnaUMN
             )
         )
 
         Spacer(modifier = Modifier.height(40.dp))
-
-//        imageUri?.let { uri ->
-//            Image(
-//                painter = rememberAsyncImagePainter(model = uri),
-//                contentDescription = null,
-//                modifier = Modifier.size(200.dp),
-//                contentScale = ContentScale.Crop
-//            )
-//        }
-
-//        val galleryLauncher = rememberLauncherForActivityResult(
-//            contract = ActivityResultContracts.GetContent(),
-//            onResult = { result: Uri? ->
-//                imageUri = result
-//            }
-//        )
-//        if (itemId != null) {
-//            Text(text = itemId)
-//        }
         OutlinedTextField(
             value = pengambil,
             onValueChange = { value -> pengambil = value },
@@ -159,56 +114,6 @@ fun DeleteArea(navController: NavController, itemId: String?) {
             onValueChange = { value -> nim = value },
             label = { Text("Nomor Induk Mahasiswa") }
         )
-//        OutlinedTextField(
-//            value = deskripsi,
-//            onValueChange = { value -> deskripsi = value },
-//            label = { Text("Deskripsi") }
-//        )
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.Center
-//        ) {
-//            FloatingActionButton(
-//                onClick = {
-//                    if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-//                        val hasPermission = ContextCompat.checkSelfPermission(
-//                            context,
-//                            Manifest.permission.CAMERA
-//                        ) == PackageManager.PERMISSION_GRANTED
-//
-//                        if (hasPermission) {
-//                            // Permission granted, launch camera
-//                            cameraLauncher.launch(capturedImageUri(context))
-//                        } else {
-//                            // Request camera permission
-//                            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-//                        }
-//                    } else {
-//                        // Device does not have a camera, handle accordingly
-//                        println("Device does not have a camera")
-//                    }
-//                },
-//                modifier = Modifier.padding(top = 16.dp)
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.camera),
-//                    contentDescription = null
-//                )
-//            }
-//            FloatingActionButton(
-//                onClick = {
-//                    // Launch the gallery intent to select an image
-//                    galleryLauncher.launch("image/*")
-//                },
-//                modifier = Modifier
-//                    .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.folder),
-//                    contentDescription = null
-//                )
-//            }
-//        }
 
         Spacer(modifier = Modifier.height(40.dp))
 

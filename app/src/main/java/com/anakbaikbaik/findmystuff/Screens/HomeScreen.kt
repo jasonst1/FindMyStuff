@@ -52,14 +52,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.anakbaikbaik.findmystuff.Model.ItemMessage
 import com.anakbaikbaik.findmystuff.NavBars.BottomNavBar
 import com.anakbaikbaik.findmystuff.NavBars.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
+import com.anakbaikbaik.findmystuff.Util.searchItems
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
@@ -67,27 +70,6 @@ import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-
-data class BottomNavigationItem(
-    val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val hasNews: Boolean,
-    val badgeCount: Int? = null
-)
-
-data class ItemMessage(
-    val id: String,
-    val nama: String,
-    val lokasi: String,
-    val deskripsi: String,
-    val status: String,
-    val gambar: String,
-    val pengambil: String,
-    val gambarPengambil: String,
-    val nim: String,
-    val tanggal: String,
-)
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -170,20 +152,23 @@ fun HomeScreen(
 
 @Composable
 fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navController: NavController, roleViewModel: RoleViewModel?) {
-    val sortedMessages = messages.sortedByDescending { it.tanggal }
+//    val sortedMessages = messages.sortedByDescending { it.tanggal }
+//
+//    var searchQuery by remember { mutableStateOf("") }
+//
+//    val filteredMessages = if (searchQuery.isNotBlank()) {
+//        sortedMessages.filter {
+//            it.nama.contains(searchQuery, ignoreCase = true) ||
+//                    it.lokasi.contains(searchQuery, ignoreCase = true) ||
+//                    it.deskripsi.contains(searchQuery, ignoreCase = true)
+//        }
+//    } else {
+//        messages
+//    }
 
-    var searchQuery by remember { mutableStateOf("") }
+    var searchQuery by remember { mutableStateOf(TextFieldValue()) }
 
-    val filteredMessages = if (searchQuery.isNotBlank()) {
-        messages.filter {
-            it.nama.contains(searchQuery, ignoreCase = true) ||
-                    it.lokasi.contains(searchQuery, ignoreCase = true) ||
-                    it.deskripsi.contains(searchQuery, ignoreCase = true)
-            // Add more fields to search if needed
-        }
-    } else {
-        messages
-    }
+    val filteredMessages = searchItems(messages, searchQuery.text)
 
     Box(
         modifier = Modifier
@@ -215,32 +200,8 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
 
                     // Display data from the observed 'currentSession' in your UI
                     currentSession?.let { session ->
-//                Column {
-//                    Text("Email: ${session.email ?: "N/A"}")
-//                    Text("User ID: ${session.userId ?: "N/A"}")
-//                    Text("Role: ${session.role ?: "N/A"}")
-//                }
                         MessageCard(message, navController, session.role)
-//                Text(text = session.role)
                     }
-
-
-                    // Display user information
-//            viewModel?.currentUser?.let { user ->
-//                Text("Username: ${user.displayName ?: "N/A"}")
-//                Text("Email: ${user.email ?: "N/A"}")
-//            }
-
-//            Button(
-//                onClick = {
-//                    viewModel?.logout()
-//                    navController.navigate(Screen.LandingScreen.route) {
-//                        popUpTo(Screen.LandingScreen.route) { inclusive = true }
-//                    }
-//                }
-//            ){
-//                Text(text = "Logout")
-//            }
                 }
             }
         }
