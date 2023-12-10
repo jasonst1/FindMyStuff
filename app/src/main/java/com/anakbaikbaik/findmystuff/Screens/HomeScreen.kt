@@ -161,10 +161,10 @@ fun HomeScreen(
 
 @Composable
 fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navController: NavController, roleViewModel: RoleViewModel?) {
-//    val sortedMessages = messages.sortedByDescending { it.tanggal }
-//
+    val sortedMessages = messages.sortedByDescending { it.tanggal }
+
 //    var searchQuery by remember { mutableStateOf("") }
-//
+
 //    val filteredMessages = if (searchQuery.isNotBlank()) {
 //        sortedMessages.filter {
 //            it.nama.contains(searchQuery, ignoreCase = true) ||
@@ -177,7 +177,7 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
 
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
 
-    val filteredMessages = searchItems(messages, searchQuery.text)
+    val filteredMessages = searchItems(sortedMessages, searchQuery.text)
 
     Box(
         modifier = Modifier
