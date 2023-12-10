@@ -157,7 +157,6 @@ fun AddArea(navController: NavController) {
             onResult = { result: Uri? ->
                 imageUri = result
                 imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
-//                getFileExtension(imageUri, context)
             }
         )
         OutlinedTextField(

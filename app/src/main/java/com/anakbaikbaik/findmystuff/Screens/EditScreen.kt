@@ -6,10 +6,13 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.anakbaikbaik.findmystuff.Model.ImageData
 import com.anakbaikbaik.findmystuff.NavBars.BottomNavBar
 import com.anakbaikbaik.findmystuff.NavBars.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.Navigation.Screen
@@ -56,10 +62,17 @@ import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
+import kotlinx.coroutines.tasks.await
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -83,6 +96,8 @@ fun EditScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavCon
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun EditArea(navController: NavController, itemId: String?) {
     Column(
@@ -92,13 +107,29 @@ fun EditArea(navController: NavController, itemId: String?) {
             .padding(top = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        var docRef by remember { mutableStateOf<DocumentSnapshot?>(null) }
+
         var nama by remember { mutableStateOf("") }
         var lokasi by remember { mutableStateOf("") }
         var deskripsi by remember { mutableStateOf("") }
         var imageUri by remember { mutableStateOf<Uri?>(null) }
+        var initialImage by remember { mutableStateOf<String?>(null) }
+        var isPhotoChanged by remember { mutableStateOf(false) }
+
         val context = LocalContext.current
 
         var imageBitmap by remember{ mutableStateOf<Bitmap?>(null)}
+
+        LaunchedEffect(itemId) {
+            docRef = retrieveData(itemId)
+
+            docRef?.let{ documentSnapshot ->
+                nama = documentSnapshot?.get("nama").toString()
+                lokasi = documentSnapshot?.get("lokasi").toString()
+                deskripsi = documentSnapshot?.get("deskripsi").toString()
+                initialImage = documentSnapshot?.get("gambar").toString()
+            }
+        }
 
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
@@ -117,6 +148,7 @@ fun EditArea(navController: NavController, itemId: String?) {
         ) { isSuccessful: Boolean ->
             if (isSuccessful) {
                 imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+                isPhotoChanged = true
             } else {
                 println("Image capture canceled or unsuccessful")
             }
@@ -137,11 +169,20 @@ fun EditArea(navController: NavController, itemId: String?) {
         Spacer(modifier = Modifier.height(10.dp))
 
         imageBitmap?.let { imageBitmap ->
+            initialImage = null
             Image(
                 painter = rememberAsyncImagePainter(imageBitmap),
                 contentDescription = null,
                 modifier = Modifier.size(200.dp),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop)
+        }
+
+        initialImage?.let { initialImage ->
+            GlideImage(
+                model = initialImage,
+                loading = placeholder(ColorPainter(Color.Red)),
+                contentDescription = null,
+                modifier = Modifier.size(200.dp)
             )
         }
 
@@ -236,58 +277,88 @@ fun EditArea(navController: NavController, itemId: String?) {
                 GreenTextButton(
                     text = stringResource(id = R.string.approveButton)
                 ) {
-                    editToDb(nama, lokasi, deskripsi, imageUri, navController, itemId)
-                }
-            }
-        }
-    }
-}
-fun editToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Uri?, navController: NavController, itemId: String?){
-    if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
-        // Inisialisasi Firebase Firestore
-        val db = Firebase.firestore
-        val storage = Firebase.storage
-        val ref = storage.reference.child(System.currentTimeMillis().toString())
-        var downloadUrl = ""
-
-        imageUri?.let {
-            ref.putFile(it).addOnSuccessListener {taskSnapshot->
-                ref.downloadUrl.addOnSuccessListener { uri->
-                    downloadUrl = uri.toString()
-                    // Membuat objek data
-                    val itemData = hashMapOf(
-                        "nama" to nama,
-                        "lokasi" to lokasi,
-                        "deskripsi" to deskripsi,
-                        "status" to "true",
-                        "gambar" to downloadUrl
-                    )
-
-                    // Menambahkan data ke koleksi "items"
-                    if (itemId != null) {
-                        db.collection("items")
-                            .document(itemId)
-                            .set(itemData, SetOptions.merge())
-                            .addOnSuccessListener {
-                                // Handle sukses (opsional)
-                                navController.navigate(Screen.HomeScreen.route)
-                            }
-                            .addOnFailureListener {
-                            }
+                    val imageData: ImageData = if (isPhotoChanged) {
+                        ImageData.UriData(imageUri!!)
+                    } else {
+                        ImageData.StringData(initialImage!!)
                     }
+                    editToDb(nama, lokasi, deskripsi, imageData, navController, itemId)
                 }
             }
         }
     }
 }
 
-fun capturedImageUri(context: Context): Uri? {
-    val contentValues = ContentValues().apply {
-        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
+suspend fun retrieveData(itemId: String?): DocumentSnapshot? {
+    val db = Firebase.firestore
+    val docRef = db.collection("items").document(itemId.toString()).get().await()
+
+    return docRef
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun editToDb(nama : String, lokasi : String, deskripsi : String, image: ImageData, navController: NavController, itemId: String?){
+    // Inisialisasi Firebase Firestore
+    val storage = Firebase.storage
+    val ref = storage.reference.child(System.currentTimeMillis().toString())
+    var downloadUrl = ""
+
+    var uri: Uri? = null
+    var url: String? = null
+
+    when (image) {
+        is ImageData.UriData -> {
+            // Use image.uri for Uri case
+            uri = image.uri
+        }
+        is ImageData.StringData -> {
+            // Use image.string for String case
+            url = image.string
+        }
     }
 
-    return context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+    if(nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && (uri != null || url != null)){
+        if(uri != null && url == null){
+            ref.putFile(uri).addOnSuccessListener { taskSnapshot ->
+                ref.downloadUrl.addOnSuccessListener { uri ->
+                    downloadUrl = uri.toString()
+                    updateFirestore(nama, lokasi, deskripsi, downloadUrl, navController, itemId)
+                }
+            }.addOnFailureListener { exception ->
+                // Handle the error
+                println("Image upload failed: $exception")
+            }
+        }
+        else if(uri == null && url != null){
+            updateFirestore(nama, lokasi, deskripsi, url, navController, itemId)
+        }
+        else{
+            Log.d("EditScreen", "EditScreen: What The Hell")
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun updateFirestore(nama : String, lokasi : String, deskripsi : String, image: String, navController: NavController, itemId: String?){
+    val db = Firebase.firestore
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    val current = LocalDateTime.now().format(formatter)
+
+    val itemData = hashMapOf(
+        "nama" to nama,
+        "lokasi" to lokasi,
+        "deskripsi" to deskripsi,
+        "status" to "true",
+        "gambar" to image,
+        "tanggal" to current
+    )
+
+    db.collection("items").document(itemId!!).set(itemData).addOnSuccessListener {
+        navController.navigate(Screen.HomeScreen.route)
+    }.addOnFailureListener {
+        Log.d("EditScreen", "EditScreen: Failed to update Firestore")
+    }
 }
 
 fun camera(context: Context) {
