@@ -61,6 +61,9 @@ import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -249,6 +252,9 @@ fun AddArea(navController: NavController) {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
+private var isUploadInProgress = false
+
+@RequiresApi(Build.VERSION_CODES.O)
 fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Uri?, navController: NavController){
     if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
         // Inisialisasi Firebase Firestore
@@ -260,30 +266,47 @@ fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Ur
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         val current = LocalDateTime.now().format(formatter)
 
-        imageUri?.let {
-            ref.putFile(it).addOnSuccessListener {taskSnapshot->
-                ref.downloadUrl.addOnSuccessListener { uri->
-                    downloadUrl = uri.toString()
-                    // Membuat objek data
-                    val itemData = hashMapOf(
-                        "nama" to nama,
-                        "lokasi" to lokasi,
-                        "deskripsi" to deskripsi,
-                        "status" to "true",
-                        "gambar" to downloadUrl,
-                        "tanggal" to current
-                    )
+        if (isUploadInProgress || nama.isEmpty() || lokasi.isEmpty() || deskripsi.isEmpty() || imageUri == null) {
+            // Upload is already in progress or missing required data
+            return
+        }
 
-                    // Menambahkan data ke koleksi "items"
-                    db.collection("items")
-                        .add(itemData)
-                        .addOnSuccessListener {
-                            // Handle sukses (opsional)
-                            navController.navigate(Screen.HomeScreen.route)
+        // Set the flag to indicate that an upload is in progress
+        isUploadInProgress = true
+
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                imageUri?.let {
+                    ref.putFile(it).addOnSuccessListener {taskSnapshot->
+                        ref.downloadUrl.addOnSuccessListener { uri->
+                            downloadUrl = uri.toString()
+                            // Membuat objek data
+                            val itemData = hashMapOf(
+                                "nama" to nama,
+                                "lokasi" to lokasi,
+                                "deskripsi" to deskripsi,
+                                "status" to "true",
+                                "gambar" to downloadUrl,
+                                "tanggal" to current
+                            )
+
+                            // Menambahkan data ke koleksi "items"
+                            db.collection("items")
+                                .add(itemData)
+                                .addOnSuccessListener {
+                                    // Handle sukses (opsional)
+                                    navController.navigate(Screen.HomeScreen.route)
+                                }
+                                .addOnFailureListener {
+                                }
                         }
-                        .addOnFailureListener {
-                        }
+                    }
                 }
+            } catch (e: Exception) {
+                // Handle failure
+            } finally {
+                // Reset the flag once the upload is completed or failed
+                isUploadInProgress = false
             }
         }
     }
