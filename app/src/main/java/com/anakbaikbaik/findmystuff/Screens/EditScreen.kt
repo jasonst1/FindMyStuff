@@ -151,6 +151,7 @@ fun EditArea(navController: NavController, itemId: String?) {
             contract = ActivityResultContracts.GetContent(),
             onResult = { result: Uri? ->
                 imageUri = result
+                imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
             }
         )
 

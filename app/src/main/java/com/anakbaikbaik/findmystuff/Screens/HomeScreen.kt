@@ -16,21 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -67,7 +58,6 @@ import com.anakbaikbaik.findmystuff.ui.theme.PrimaryTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-import androidx.compose.material3.Icon
 
 data class BottomNavigationItem(
     val title: String,
@@ -205,12 +195,15 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
                         contentDescription = null
                     )
                 },
+                shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(top = 10.dp, start = 16.dp, end = 16.dp, bottom = 10.dp)
+                    .background(color = Color.Transparent),
             )
+
             LazyColumn(
-                modifier = Modifier.padding(top = 10.dp, bottom = 80.dp)
+                modifier = Modifier.padding(bottom = 80.dp)
             ) {
                 items(filteredMessages) { message ->
 
@@ -234,7 +227,7 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
 
     Column(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(end = 8.dp, start = 8.dp)
             .fillMaxWidth()
             .shadow(
                 elevation = 4.dp

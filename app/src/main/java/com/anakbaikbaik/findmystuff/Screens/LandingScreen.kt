@@ -2,6 +2,7 @@ package com.anakbaikbaik.findmystuff.Screens
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,11 +28,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -41,9 +43,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.anakbaikbaik.findmystuff.Data.Resource
 import com.anakbaikbaik.findmystuff.Navigation.Screen
+import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.topBar
-import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 
 @Composable
 fun LandingScreen(navController: NavController, viewModel: AuthViewModel?){
@@ -86,7 +88,7 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
             )
         }
         Column(
-            modifier = Modifier.padding(top = 170.dp, bottom = 50.dp),
+            modifier = Modifier.padding(top = 150.dp, bottom = 50.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -94,15 +96,24 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
             val email = remember { mutableStateOf(TextFieldValue()) }
             val password = remember { mutableStateOf(TextFieldValue()) }
 
-            Text(
-                text = "Log In",
-//                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
-                style = TextStyle(
-                    fontSize = 40.sp,
-                    fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.Bold,
-                    color = warnaUMN
-                )
+//            Text(
+//                text = "Log In",
+////                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
+//                style = TextStyle(
+//                    fontSize = 40.sp,
+//                    fontFamily = FontFamily.SansSerif,
+//                    fontWeight = FontWeight.Bold,
+//                    color = warnaUMN
+//                )
+//            )
+
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 30.dp, end = 30.dp),
+                contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.height(40.dp))

@@ -8,7 +8,7 @@ data class ItemMessage(
     val status: String,
     val gambar: String,
     val pengambil: String,
-    val gambarPengambil: String,
+    val fotoPengambil: String,
     val nim: String,
     val tanggal: String,
 )
