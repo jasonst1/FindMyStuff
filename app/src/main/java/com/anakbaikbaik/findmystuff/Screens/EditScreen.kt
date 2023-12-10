@@ -1,7 +1,6 @@
 package com.anakbaikbaik.findmystuff.Screens
 
 import android.Manifest
-import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -67,7 +66,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.tasks.await
@@ -75,6 +73,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun EditScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavController, roleViewModel: RoleViewModel?) {
@@ -330,6 +329,7 @@ fun editToDb(nama : String, lokasi : String, deskripsi : String, image: ImageDat
             }
         }
         else if(uri == null && url != null){
+            navController.navigate(Screen.HomeScreen.route)
             updateFirestore(nama, lokasi, deskripsi, url, navController, itemId)
         }
         else{
