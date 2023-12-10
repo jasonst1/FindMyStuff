@@ -6,11 +6,13 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.anakbaikbaik.findmystuff.Model.ImageData
 import com.anakbaikbaik.findmystuff.NavBars.BottomNavBar
 import com.anakbaikbaik.findmystuff.NavBars.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.Navigation.Screen
@@ -68,6 +71,8 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -91,6 +96,7 @@ fun EditScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavCon
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun EditArea(navController: NavController, itemId: String?) {
@@ -271,7 +277,12 @@ fun EditArea(navController: NavController, itemId: String?) {
                 GreenTextButton(
                     text = stringResource(id = R.string.approveButton)
                 ) {
-                    editToDb(nama, lokasi, deskripsi, imageUri, navController, itemId)
+                    val imageData: ImageData = if (isPhotoChanged) {
+                        ImageData.UriData(imageUri!!)
+                    } else {
+                        ImageData.StringData(initialImage!!)
+                    }
+                    editToDb(nama, lokasi, deskripsi, imageData, navController, itemId)
                 }
             }
         }
@@ -285,52 +296,69 @@ suspend fun retrieveData(itemId: String?): DocumentSnapshot? {
     return docRef
 }
 
-fun editToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Uri?, navController: NavController, itemId: String?){
-    if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
-        // Inisialisasi Firebase Firestore
-        val db = Firebase.firestore
-        val storage = Firebase.storage
-        val ref = storage.reference.child(System.currentTimeMillis().toString())
-        var downloadUrl = ""
+@RequiresApi(Build.VERSION_CODES.O)
+fun editToDb(nama : String, lokasi : String, deskripsi : String, image: ImageData, navController: NavController, itemId: String?){
+    // Inisialisasi Firebase Firestore
+    val storage = Firebase.storage
+    val ref = storage.reference.child(System.currentTimeMillis().toString())
+    var downloadUrl = ""
 
-        imageUri?.let {
-            ref.putFile(it).addOnSuccessListener {taskSnapshot->
-                ref.downloadUrl.addOnSuccessListener { uri->
+    var uri: Uri? = null
+    var url: String? = null
+
+    when (image) {
+        is ImageData.UriData -> {
+            // Use image.uri for Uri case
+            uri = image.uri
+        }
+        is ImageData.StringData -> {
+            // Use image.string for String case
+            url = image.string
+        }
+    }
+
+    if(nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && (uri != null || url != null)){
+        if(uri != null && url == null){
+            ref.putFile(uri).addOnSuccessListener { taskSnapshot ->
+                ref.downloadUrl.addOnSuccessListener { uri ->
                     downloadUrl = uri.toString()
-                    // Membuat objek data
-                    val itemData = hashMapOf(
-                        "nama" to nama,
-                        "lokasi" to lokasi,
-                        "deskripsi" to deskripsi,
-                        "status" to "true",
-                        "gambar" to downloadUrl
-                    )
-
-                    // Menambahkan data ke koleksi "items"
-                    if (itemId != null) {
-                        db.collection("items")
-                            .document(itemId)
-                            .set(itemData, SetOptions.merge())
-                            .addOnSuccessListener {
-                                // Handle sukses (opsional)
-                                navController.navigate(Screen.HomeScreen.route)
-                            }
-                            .addOnFailureListener {
-                            }
-                    }
+                    updateFirestore(nama, lokasi, deskripsi, downloadUrl, navController, itemId)
                 }
+            }.addOnFailureListener { exception ->
+                // Handle the error
+                println("Image upload failed: $exception")
             }
+        }
+        else if(uri == null && url != null){
+            updateFirestore(nama, lokasi, deskripsi, url, navController, itemId)
+        }
+        else{
+            Log.d("EditScreen", "EditScreen: What The Hell")
         }
     }
 }
 
-fun capturedImageUri(context: Context): Uri? {
-    val contentValues = ContentValues().apply {
-        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
-    }
+@RequiresApi(Build.VERSION_CODES.O)
+fun updateFirestore(nama : String, lokasi : String, deskripsi : String, image: String, navController: NavController, itemId: String?){
+    val db = Firebase.firestore
 
-    return context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    val current = LocalDateTime.now().format(formatter)
+
+    val itemData = hashMapOf(
+        "nama" to nama,
+        "lokasi" to lokasi,
+        "deskripsi" to deskripsi,
+        "status" to "true",
+        "gambar" to image,
+        "tanggal" to current
+    )
+
+    db.collection("items").document(itemId!!).set(itemData).addOnSuccessListener {
+        navController.navigate(Screen.HomeScreen.route)
+    }.addOnFailureListener {
+        Log.d("EditScreen", "EditScreen: Failed to update Firestore")
+    }
 }
 
 fun camera(context: Context) {
