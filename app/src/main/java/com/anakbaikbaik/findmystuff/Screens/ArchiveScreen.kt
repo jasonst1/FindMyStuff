@@ -15,21 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,14 +25,12 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -53,8 +38,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.anakbaikbaik.findmystuff.Model.ItemMessage
 import com.anakbaikbaik.findmystuff.NavBars.BottomNavBar
 import com.anakbaikbaik.findmystuff.NavBars.TopBarWithLogout
-import com.anakbaikbaik.findmystuff.Navigation.Screen
-import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
@@ -92,11 +75,11 @@ fun ArchiveScreen(viewModel: AuthViewModel?, navController: NavController, fires
                     val status = document.getString("status") ?: ""
                     val gambar = document.getString("gambar") ?: ""
                     val pengambil = document.getString("pengambil") ?: ""
-                    val gambarPengambil = document.getString("gambarPengambil") ?: ""
+                    val fotoPengambil = document.getString("fotoPengambil") ?: ""
                     val nim = document.getString("nim") ?: ""
                     val tanggal = document.getString("tanggal") ?: ""
 
-                    ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, gambarPengambil, nim, tanggal)
+                    ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, fotoPengambil, nim, tanggal)
                 } catch (e: Exception) {
                     // Handle parsing error here
                     null
@@ -165,73 +148,98 @@ fun MessageCardArchive(itemMessage: ItemMessage, navController: NavController) {
     val context = LocalContext.current
     Log.d("Image URL", itemMessage.gambar)
 
-    Row (
+    Column(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(10.dp)
             .fillMaxWidth()
             .shadow(
                 elevation = 4.dp
             )
-            .border(1.dp, Color.Black)
-    ){
-        Column {
-            Row (
-                modifier = Modifier.padding(8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Column (
-                    modifier = Modifier
-                        .background(color = warnaUMN)
+            .border(1.dp, Color.Black),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row (
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ){
+            Column {
+                Row (
+                    modifier = Modifier.padding(5.dp),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(model = itemMessage.gambar),
-                        contentDescription = null,
+                    Column (
                         modifier = Modifier
-                            .size(180.dp),
-                        contentScale = ContentScale.Crop
-                    )
+                            .background(color = warnaUMN)
+                    ) {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = itemMessage.gambar),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(180.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            }
+            Column {
+                Row (
+                    modifier = Modifier.padding(5.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Column (
+                        modifier = Modifier
+                            .background(color = warnaUMN)
+                    ) {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = itemMessage.fotoPengambil),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(180.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
         }
-        Column {
-            Row {
-                Column (
-                    modifier = Modifier.padding(vertical = 15.dp, horizontal = 5.dp),
-                ) {
-                    Text(
-                        text = "Nama: ${itemMessage.nama}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 15.sp
-                    )
+        Row {
+            Column (
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
+            ) {
+                Text(
+                    text = "Nama: ${itemMessage.nama}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 15.sp
+                )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-                    Text(
-                        text = "Kode : ${itemMessage.id}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 15.sp
-                    )
+                Text(
+                    text = "Kode : ${itemMessage.id}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 15.sp
+                )
 
-                    Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
-                    Text(
-                        text = "Pengambil : ${itemMessage.pengambil}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 15.sp
-                    )
+                Text(
+                    text = "Pengambil : ${itemMessage.pengambil}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 15.sp
+                )
 
-                    Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
-                    Text(
-                        text = "NIM : ${itemMessage.nim}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 15.sp
-                    )
-                }
+                Text(
+                    text = "NIM : ${itemMessage.nim}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 15.sp
+                )
             }
         }
     }
