@@ -106,6 +106,8 @@ fun EditArea(navController: NavController, itemId: String?) {
         var lokasi by remember { mutableStateOf("") }
         var deskripsi by remember { mutableStateOf("") }
         var imageUri by remember { mutableStateOf<Uri?>(null) }
+        var isPhotoChanged by remember { mutableStateOf(false) }
+
         val context = LocalContext.current
 
         var imageBitmap by remember{ mutableStateOf<Bitmap?>(null)}
@@ -116,8 +118,6 @@ fun EditArea(navController: NavController, itemId: String?) {
             deskripsi = documentSnapshot?.get("deskripsi").toString()
             imageUri = Uri.parse(documentSnapshot?.get("gambar").toString())
         }
-
-        Log.d("EditScreen", "data: $nama, $lokasi, $deskripsi, $imageUri")
 
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
@@ -136,6 +136,7 @@ fun EditArea(navController: NavController, itemId: String?) {
         ) { isSuccessful: Boolean ->
             if (isSuccessful) {
                 imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+                isPhotoChanged = true
             } else {
                 println("Image capture canceled or unsuccessful")
             }
