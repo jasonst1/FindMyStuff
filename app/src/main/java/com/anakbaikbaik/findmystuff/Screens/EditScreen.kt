@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,6 +30,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,9 +59,11 @@ import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
+import kotlinx.coroutines.tasks.await
 
 
 @Composable
@@ -92,6 +96,12 @@ fun EditArea(navController: NavController, itemId: String?) {
             .padding(top = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        var docRef by remember { mutableStateOf<DocumentSnapshot?>(null) }
+
+        LaunchedEffect(itemId) {
+            docRef = retrieveData(itemId)
+        }
+
         var nama by remember { mutableStateOf("") }
         var lokasi by remember { mutableStateOf("") }
         var deskripsi by remember { mutableStateOf("") }
@@ -99,6 +109,15 @@ fun EditArea(navController: NavController, itemId: String?) {
         val context = LocalContext.current
 
         var imageBitmap by remember{ mutableStateOf<Bitmap?>(null)}
+
+        docRef?.let{ documentSnapshot ->
+            nama = documentSnapshot?.get("nama").toString()
+            lokasi = documentSnapshot?.get("lokasi").toString()
+            deskripsi = documentSnapshot?.get("deskripsi").toString()
+            imageUri = Uri.parse(documentSnapshot?.get("gambar").toString())
+        }
+
+        Log.d("EditScreen", "data: $nama, $lokasi, $deskripsi, $imageUri")
 
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
@@ -242,6 +261,14 @@ fun EditArea(navController: NavController, itemId: String?) {
         }
     }
 }
+
+suspend fun retrieveData(itemId: String?): DocumentSnapshot? {
+    val db = Firebase.firestore
+    val docRef = db.collection("items").document(itemId.toString()).get().await()
+
+    return docRef
+}
+
 fun editToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Uri?, navController: NavController, itemId: String?){
     if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
         // Inisialisasi Firebase Firestore
