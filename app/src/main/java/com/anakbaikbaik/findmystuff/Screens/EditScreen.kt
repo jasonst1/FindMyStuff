@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -58,6 +59,9 @@ import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
 import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.SetOptions
@@ -87,6 +91,7 @@ fun EditScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavCon
     )
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun EditArea(navController: NavController, itemId: String?) {
     Column(
@@ -106,6 +111,7 @@ fun EditArea(navController: NavController, itemId: String?) {
         var lokasi by remember { mutableStateOf("") }
         var deskripsi by remember { mutableStateOf("") }
         var imageUri by remember { mutableStateOf<Uri?>(null) }
+        var initialImage by remember { mutableStateOf<String?>(null) }
         var isPhotoChanged by remember { mutableStateOf(false) }
 
         val context = LocalContext.current
@@ -116,7 +122,7 @@ fun EditArea(navController: NavController, itemId: String?) {
             nama = documentSnapshot?.get("nama").toString()
             lokasi = documentSnapshot?.get("lokasi").toString()
             deskripsi = documentSnapshot?.get("deskripsi").toString()
-            imageUri = Uri.parse(documentSnapshot?.get("gambar").toString())
+            initialImage = documentSnapshot?.get("gambar").toString()
         }
 
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
@@ -157,11 +163,20 @@ fun EditArea(navController: NavController, itemId: String?) {
         Spacer(modifier = Modifier.height(10.dp))
 
         imageBitmap?.let { imageBitmap ->
+            initialImage = null
             Image(
                 painter = rememberAsyncImagePainter(imageBitmap),
                 contentDescription = null,
                 modifier = Modifier.size(200.dp),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop)
+        }
+
+        initialImage?.let { initialImage ->
+            GlideImage(
+                model = initialImage,
+                loading = placeholder(ColorPainter(Color.Red)),
+                contentDescription = null,
+                modifier = Modifier.size(200.dp)
             )
         }
 
