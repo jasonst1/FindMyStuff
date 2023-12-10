@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -88,7 +89,7 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
             )
         }
         Column(
-            modifier = Modifier.padding(top = 150.dp, bottom = 50.dp),
+            modifier = Modifier.padding(top = 120.dp, bottom = 50.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -111,12 +112,11 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 30.dp, end = 30.dp),
+                    .size(250.dp),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             TextField(
                 label = { Text(text = "email") },
