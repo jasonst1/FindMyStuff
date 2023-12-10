@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -203,7 +204,9 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
             )
 
             LazyColumn(
-                modifier = Modifier.padding(bottom = 80.dp)
+                modifier = Modifier
+                    .padding(bottom = 80.dp)
+                    .offset(0.dp)
             ) {
                 items(filteredMessages) { message ->
 

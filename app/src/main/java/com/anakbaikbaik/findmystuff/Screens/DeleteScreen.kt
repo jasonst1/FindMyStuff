@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -148,6 +149,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
             contract = ActivityResultContracts.GetContent(),
             onResult = { result: Uri? ->
                 imageUri = result
+                imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
             }
         )
 //        if (itemId != null) {
@@ -223,7 +225,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -242,7 +244,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
                     text = stringResource(id = R.string.approveButton)
                 ) {
                     // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
-                    if (pengambil.isNotEmpty() && nim.isNotEmpty() && imageUri != null) {
+                    if (pengambil.isNotEmpty() && nim.isNotEmpty() && nim.length == 11 && imageUri != null) {
                         // Inisialisasi Firebase Firestore
                         val db = Firebase.firestore
                         val storage = Firebase.storage
@@ -276,6 +278,8 @@ fun DeleteArea(navController: NavController, itemId: String?) {
                                 }
                             }
                         }
+                    } else {
+                        Toast.makeText(context, "Invalid input. Cek Nama, NIM, atau Gambar.", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
