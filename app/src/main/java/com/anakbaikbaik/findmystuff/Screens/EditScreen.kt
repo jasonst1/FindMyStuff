@@ -109,10 +109,6 @@ fun EditArea(navController: NavController, itemId: String?) {
     ) {
         var docRef by remember { mutableStateOf<DocumentSnapshot?>(null) }
 
-        LaunchedEffect(itemId) {
-            docRef = retrieveData(itemId)
-        }
-
         var nama by remember { mutableStateOf("") }
         var lokasi by remember { mutableStateOf("") }
         var deskripsi by remember { mutableStateOf("") }
@@ -124,11 +120,15 @@ fun EditArea(navController: NavController, itemId: String?) {
 
         var imageBitmap by remember{ mutableStateOf<Bitmap?>(null)}
 
-        docRef?.let{ documentSnapshot ->
-            nama = documentSnapshot?.get("nama").toString()
-            lokasi = documentSnapshot?.get("lokasi").toString()
-            deskripsi = documentSnapshot?.get("deskripsi").toString()
-            initialImage = documentSnapshot?.get("gambar").toString()
+        LaunchedEffect(itemId) {
+            docRef = retrieveData(itemId)
+
+            docRef?.let{ documentSnapshot ->
+                nama = documentSnapshot?.get("nama").toString()
+                lokasi = documentSnapshot?.get("lokasi").toString()
+                deskripsi = documentSnapshot?.get("deskripsi").toString()
+                initialImage = documentSnapshot?.get("gambar").toString()
+            }
         }
 
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
