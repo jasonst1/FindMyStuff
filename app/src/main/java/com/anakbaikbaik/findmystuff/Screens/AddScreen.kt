@@ -239,6 +239,7 @@ fun AddArea(navController: NavController) {
                 GreenTextButton(
                     text = stringResource(id = R.string.approveButton)
                 ) {
+                    navController.navigate(Screen.HomeScreen.route)
                     // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
                     uploadToDb(nama, lokasi, deskripsi, imageUri, navController)
                 }
