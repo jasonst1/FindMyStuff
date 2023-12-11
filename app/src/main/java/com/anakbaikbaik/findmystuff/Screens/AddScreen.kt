@@ -54,6 +54,9 @@ import com.anakbaikbaik.findmystuff.NavBars.BottomNavBar
 import com.anakbaikbaik.findmystuff.NavBars.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
+import com.anakbaikbaik.findmystuff.Util.getCapturedImageUri
+import com.anakbaikbaik.findmystuff.Util.launchCamera
+import com.anakbaikbaik.findmystuff.Util.uploadToDb
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
@@ -248,83 +251,5 @@ fun AddArea(navController: NavController) {
                 }
             }
         }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-private var isUploadInProgress = false
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Uri?, navController: NavController){
-    if (nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && imageUri != null) {
-        // Inisialisasi Firebase Firestore
-        val db = Firebase.firestore
-        val storage = Firebase.storage
-        val ref = storage.reference.child(System.currentTimeMillis().toString())
-        var downloadUrl = ""
-
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        val current = LocalDateTime.now().format(formatter)
-
-        if (isUploadInProgress || nama.isEmpty() || lokasi.isEmpty() || deskripsi.isEmpty() || imageUri == null) {
-            // Upload is already in progress or missing required data
-            return
-        }
-
-        // Set the flag to indicate that an upload is in progress
-        isUploadInProgress = true
-
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                imageUri?.let {
-                    ref.putFile(it).addOnSuccessListener {taskSnapshot->
-                        ref.downloadUrl.addOnSuccessListener { uri->
-                            downloadUrl = uri.toString()
-                            // Membuat objek data
-                            val itemData = hashMapOf(
-                                "nama" to nama,
-                                "lokasi" to lokasi,
-                                "deskripsi" to deskripsi,
-                                "status" to "true",
-                                "gambar" to downloadUrl,
-                                "tanggal" to current
-                            )
-
-                            // Menambahkan data ke koleksi "items"
-                            db.collection("items")
-                                .add(itemData)
-                                .addOnSuccessListener {
-                                    // Handle sukses (opsional)
-                                    navController.navigate(Screen.HomeScreen.route)
-                                }
-                                .addOnFailureListener {
-                                }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                // Handle failure
-            } finally {
-                // Reset the flag once the upload is completed or failed
-                isUploadInProgress = false
-            }
-        }
-    }
-}
-
-fun getCapturedImageUri(context: Context): Uri? {
-    val contentValues = ContentValues().apply {
-        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
-    }
-
-    return context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-}
-
-fun launchCamera(context: Context) {
-    try {
-        // Start the camera activity using the photoUri
-    } catch (e: Exception) {
-        println("Error launching camera: ${e.message}")
     }
 }

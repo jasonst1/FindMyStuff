@@ -60,27 +60,6 @@ import com.anakbaikbaik.findmystuff.ui.theme.warnaUMN
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
-data class BottomNavigationItem(
-    val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val hasNews: Boolean,
-    val badgeCount: Int? = null
-)
-
-data class ItemMessage(
-    val id: String,
-    val nama: String,
-    val lokasi: String,
-    val deskripsi: String,
-    val status: String,
-    val gambar: String,
-    val pengambil: String,
-    val fotoPengambil: String,
-    val nim: String,
-    val tanggal: String,
-)
-
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreen(
