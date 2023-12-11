@@ -153,8 +153,9 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
                 when(it){
                     is Resource.Failure -> {
                         val context = LocalContext.current
-//                        Log.e("Authentication", "Failure: ${it.exception.message}")
+                        Log.e("Authentication", "Failure: ${it.exception.message}")
                         Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                        viewModel.resetLoginFlow()
                     }
                     Resource.Loading -> {
                         CircularProgressIndicator()
