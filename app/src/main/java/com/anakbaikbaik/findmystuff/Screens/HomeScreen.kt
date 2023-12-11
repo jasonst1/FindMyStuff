@@ -102,6 +102,8 @@ fun HomeScreen(
                     val tanggal = document.getString("tanggal") ?: ""
 
                     ItemMessage(id, nama, lokasi, deskripsi, status, gambar, pengambil, fotoPengambil, nim, tanggal)
+
+
                 } catch (e: Exception) {
                     // Handle parsing error here
                     null
@@ -142,18 +144,6 @@ fun HomeScreen(
 @Composable
 fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navController: NavController, roleViewModel: RoleViewModel?) {
     val sortedMessages = messages.sortedByDescending { it.tanggal }
-
-//    var searchQuery by remember { mutableStateOf("") }
-
-//    val filteredMessages = if (searchQuery.isNotBlank()) {
-//        sortedMessages.filter {
-//            it.nama.contains(searchQuery, ignoreCase = true) ||
-//                    it.lokasi.contains(searchQuery, ignoreCase = true) ||
-//                    it.deskripsi.contains(searchQuery, ignoreCase = true)
-//        }
-//    } else {
-//        messages
-//    }
 
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
 
