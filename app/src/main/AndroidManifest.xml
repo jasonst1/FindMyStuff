@@ -20,12 +20,14 @@
         android:roundIcon="@mipmap/logo_landing_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FindMyStuff"
+        android:screenOrientation="sensorPortrait"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.FindMyStuff">
+            android:theme="@style/Theme.FindMyStuff"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
