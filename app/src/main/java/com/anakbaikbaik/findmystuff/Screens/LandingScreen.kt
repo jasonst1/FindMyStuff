@@ -97,17 +97,6 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
             val email = remember { mutableStateOf(TextFieldValue()) }
             val password = remember { mutableStateOf(TextFieldValue()) }
 
-//            Text(
-//                text = "Log In",
-////                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
-//                style = TextStyle(
-//                    fontSize = 40.sp,
-//                    fontFamily = FontFamily.SansSerif,
-//                    fontWeight = FontWeight.Bold,
-//                    color = warnaUMN
-//                )
-//            )
-
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = null,
@@ -164,7 +153,9 @@ fun LandingArea(viewModel: AuthViewModel?, navController: NavController){
                 when(it){
                     is Resource.Failure -> {
                         val context = LocalContext.current
+                        Log.e("Authentication", "Failure: ${it.exception.message}")
                         Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                        viewModel.resetLoginFlow()
                     }
                     Resource.Loading -> {
                         CircularProgressIndicator()

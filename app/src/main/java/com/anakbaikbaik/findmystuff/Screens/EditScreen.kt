@@ -57,6 +57,11 @@ import com.anakbaikbaik.findmystuff.NavBars.BottomNavBar
 import com.anakbaikbaik.findmystuff.NavBars.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
+import com.anakbaikbaik.findmystuff.Util.editToDb
+import com.anakbaikbaik.findmystuff.Util.getCapturedImageUri
+import com.anakbaikbaik.findmystuff.Util.launchCamera
+import com.anakbaikbaik.findmystuff.Util.retrieveData
+import com.anakbaikbaik.findmystuff.Util.updateFirestore
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
@@ -192,6 +197,7 @@ fun EditArea(navController: NavController, itemId: String?) {
             onResult = { result: Uri? ->
                 imageUri = result
                 imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+                isPhotoChanged = true
             }
         )
 
@@ -285,86 +291,5 @@ fun EditArea(navController: NavController, itemId: String?) {
                 }
             }
         }
-    }
-}
-
-suspend fun retrieveData(itemId: String?): DocumentSnapshot? {
-    val db = Firebase.firestore
-    val docRef = db.collection("items").document(itemId.toString()).get().await()
-
-    return docRef
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun editToDb(nama : String, lokasi : String, deskripsi : String, image: ImageData, navController: NavController, itemId: String?){
-    // Inisialisasi Firebase Firestore
-    val storage = Firebase.storage
-    val ref = storage.reference.child(System.currentTimeMillis().toString())
-    var downloadUrl = ""
-
-    var uri: Uri? = null
-    var url: String? = null
-
-    when (image) {
-        is ImageData.UriData -> {
-            // Use image.uri for Uri case
-            uri = image.uri
-        }
-        is ImageData.StringData -> {
-            // Use image.string for String case
-            url = image.string
-        }
-    }
-
-    if(nama.isNotEmpty() && lokasi.isNotEmpty() && deskripsi.isNotEmpty() && (uri != null || url != null)){
-        if(uri != null && url == null){
-            ref.putFile(uri).addOnSuccessListener { taskSnapshot ->
-                ref.downloadUrl.addOnSuccessListener { uri ->
-                    downloadUrl = uri.toString()
-                    updateFirestore(nama, lokasi, deskripsi, downloadUrl, navController, itemId)
-                }
-            }.addOnFailureListener { exception ->
-                // Handle the error
-                println("Image upload failed: $exception")
-            }
-        }
-        else if(uri == null && url != null){
-            navController.navigate(Screen.HomeScreen.route)
-            updateFirestore(nama, lokasi, deskripsi, url, navController, itemId)
-        }
-        else{
-            Log.d("EditScreen", "EditScreen: What The Hell")
-        }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun updateFirestore(nama : String, lokasi : String, deskripsi : String, image: String, navController: NavController, itemId: String?){
-    val db = Firebase.firestore
-
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-    val current = LocalDateTime.now().format(formatter)
-
-    val itemData = hashMapOf(
-        "nama" to nama,
-        "lokasi" to lokasi,
-        "deskripsi" to deskripsi,
-        "status" to "true",
-        "gambar" to image,
-        "tanggal" to current
-    )
-
-    db.collection("items").document(itemId!!).set(itemData).addOnSuccessListener {
-        navController.navigate(Screen.HomeScreen.route)
-    }.addOnFailureListener {
-        Log.d("EditScreen", "EditScreen: Failed to update Firestore")
-    }
-}
-
-fun camera(context: Context) {
-    try {
-        // Start the camera activity using the photoUri
-    } catch (e: Exception) {
-        println("Error launching camera: ${e.message}")
     }
 }
