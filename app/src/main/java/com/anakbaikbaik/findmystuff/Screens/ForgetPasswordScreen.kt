@@ -97,6 +97,7 @@ fun ForgetPasswordArea(viewModel: AuthViewModel?, navController: NavController){
                 is Resource.Failure -> {
                     val context = LocalContext.current
                     Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                    viewModel.resetPasswordFlowNull()
                 }
                 Resource.Loading -> {
                     CircularProgressIndicator()
