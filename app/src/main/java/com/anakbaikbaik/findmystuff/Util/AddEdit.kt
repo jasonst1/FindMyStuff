@@ -168,5 +168,6 @@ fun launchCamera(context: Context) {
     try {
         // Start the camera activity using the photoUri
     } catch (e: Exception) {
+        println("Error launching camera: ${e.message}")
     }
 }
