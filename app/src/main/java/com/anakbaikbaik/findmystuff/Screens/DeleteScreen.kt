@@ -127,7 +127,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
             }
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Text(
             text = "Klaim Barang",

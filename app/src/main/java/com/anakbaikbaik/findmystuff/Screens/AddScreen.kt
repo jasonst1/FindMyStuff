@@ -127,7 +127,7 @@ fun AddArea(navController: NavController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         
         Text(
             text = "Tambah Barang",
