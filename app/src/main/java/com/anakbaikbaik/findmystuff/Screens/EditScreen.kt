@@ -1,13 +1,11 @@
 package com.anakbaikbaik.findmystuff.Screens
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +20,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -61,7 +61,6 @@ import com.anakbaikbaik.findmystuff.Util.editToDb
 import com.anakbaikbaik.findmystuff.Util.getCapturedImageUri
 import com.anakbaikbaik.findmystuff.Util.launchCamera
 import com.anakbaikbaik.findmystuff.Util.retrieveData
-import com.anakbaikbaik.findmystuff.Util.updateFirestore
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
@@ -69,13 +68,7 @@ import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.firestore
-import com.google.firebase.storage.storage
-import kotlinx.coroutines.tasks.await
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -104,11 +97,13 @@ fun EditScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavCon
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun EditArea(navController: NavController, itemId: String?) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .padding(top = 80.dp),
+            .padding(top = 80.dp, bottom = 100.dp)
+            .verticalScroll(state = scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         var docRef by remember { mutableStateOf<DocumentSnapshot?>(null) }
@@ -158,7 +153,7 @@ fun EditArea(navController: NavController, itemId: String?) {
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Text(
             text = "Edit Barang",

@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -86,11 +88,13 @@ fun DeleteScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavC
 
 @Composable
 fun DeleteArea(navController: NavController, itemId: String?) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .padding(top = 100.dp),
+            .padding(top = 100.dp, bottom = 100.dp)
+            .verticalScroll(state = scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         var pengambil by remember { mutableStateOf("") }
@@ -123,7 +127,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
             }
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Text(
             text = "Klaim Barang",
