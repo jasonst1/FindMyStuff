@@ -76,6 +76,7 @@ fun DeleteScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavC
             Scaffold(
                 topBar = { TopBarWithLogout(viewModel, navController) },
                 content = {it
+                    // Tell the DeleteArea that the itemId want to delete
                     DeleteArea(navController, itemId)
                 },
                 bottomBar = {
@@ -105,6 +106,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
 
         var imageBitmap by remember{ mutableStateOf<Bitmap?>(null)}
 
+        // Camera permission
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
@@ -117,6 +119,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
             }
         }
 
+        // Camera Launcher
         val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.TakePicture()
         ) { isSuccessful: Boolean ->
@@ -140,6 +143,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        // Menampilkan foto pengambil
         imageBitmap?.let { imageBitmap ->
             Image(
                 painter = rememberAsyncImagePainter(imageBitmap),
@@ -151,6 +155,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
             )
         }
 
+        // Gallery Launcher
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
             onResult = { result: Uri? ->
@@ -188,6 +193,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
         ) {
             FloatingActionButton(
                 containerColor = Color.White,
+                // Access the native feature (camera)
                 onClick = {
                     if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                         val hasPermission = ContextCompat.checkSelfPermission(
@@ -238,6 +244,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
             horizontalArrangement = Arrangement.Center
         ) {
             Column {
+                // If this button was clicked, go back to home and cancel of any changed content
                 RedTextButton(
                     text = stringResource(id = R.string.cancelButton),
                     onClick = {
@@ -250,6 +257,7 @@ fun DeleteArea(navController: NavController, itemId: String?) {
                     text = stringResource(id = R.string.approveButton)
                 ) {
                     // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
+                    // Checking the value of data is it nul??
                     if (pengambil.isNotEmpty() && nim.isNotEmpty() && nim.length == 11 && imageUri != null) {
                         // Inisialisasi Firebase Firestore
                         val db = Firebase.firestore
@@ -257,19 +265,21 @@ fun DeleteArea(navController: NavController, itemId: String?) {
                         val ref = storage.reference.child(System.currentTimeMillis().toString())
                         var downloadUrl = ""
 
+                        // Kalau gambar is not null, continue
                         imageUri?.let {
                             ref.putFile(it).addOnSuccessListener {taskSnapshot->
                                 ref.downloadUrl.addOnSuccessListener { uri->
                                     downloadUrl = uri.toString()
-                                    // Membuat objek data
+                                    // Membuat objek data, and then store it to the variable on database
                                     val itemData = hashMapOf(
                                         "pengambil" to pengambil,
                                         "nim" to nim,
+                                        // Status di ubah menjadi false, agar dapat ditampilkan di history
                                         "status" to "false",
                                         "fotoPengambil" to downloadUrl
                                     )
 
-                                    // Menambahkan data ke koleksi "items"
+                                    // Menambahkan data ke koleksi "items" on database
                                     if (itemId != null) {
                                         db.collection("items")
                                             .document(itemId)

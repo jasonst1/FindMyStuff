@@ -83,6 +83,7 @@ fun EditScreen(viewModel: AuthViewModel?, itemId: String?, navController: NavCon
             Scaffold(
                 topBar = { TopBarWithLogout(viewModel, navController) },
                 content = {it
+                    // Passing itemId from Home to EditArea for execution
                     EditArea(navController, itemId)
                 },
                 bottomBar = {
@@ -103,9 +104,12 @@ fun EditArea(navController: NavController, itemId: String?) {
             .fillMaxSize()
             .padding(horizontal = 16.dp)
             .padding(top = 80.dp, bottom = 100.dp)
+            // For make the screen scrollable
             .verticalScroll(state = scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        // Inisialisasi Variable yang akan di input
+
         var docRef by remember { mutableStateOf<DocumentSnapshot?>(null) }
 
         var nama by remember { mutableStateOf("") }
@@ -122,6 +126,7 @@ fun EditArea(navController: NavController, itemId: String?) {
         LaunchedEffect(itemId) {
             docRef = retrieveData(itemId)
 
+            // Calling the data from id yang diminta
             docRef?.let{ documentSnapshot ->
                 nama = documentSnapshot?.get("nama").toString()
                 lokasi = documentSnapshot?.get("lokasi").toString()
@@ -130,6 +135,7 @@ fun EditArea(navController: NavController, itemId: String?) {
             }
         }
 
+        // Camera Permission
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
@@ -142,6 +148,7 @@ fun EditArea(navController: NavController, itemId: String?) {
             }
         }
 
+        // Camera Launcher
         val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.TakePicture()
         ) { isSuccessful: Boolean ->
@@ -167,6 +174,7 @@ fun EditArea(navController: NavController, itemId: String?) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // For showing the image of edited content
         imageBitmap?.let { imageBitmap ->
             initialImage = null
             Image(
@@ -176,6 +184,7 @@ fun EditArea(navController: NavController, itemId: String?) {
                 contentScale = ContentScale.Crop)
         }
 
+        // For showing the initImage that got from content id
         initialImage?.let { initialImage ->
             GlideImage(
                 model = initialImage,
@@ -187,6 +196,7 @@ fun EditArea(navController: NavController, itemId: String?) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // Gallery launcher
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
             onResult = { result: Uri? ->
@@ -282,6 +292,7 @@ fun EditArea(navController: NavController, itemId: String?) {
                     } else {
                         ImageData.StringData(initialImage!!)
                     }
+                    // Store data that have been edited
                     editToDb(nama, lokasi, deskripsi, imageData, navController, itemId)
                 }
             }
