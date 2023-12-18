@@ -105,6 +105,7 @@ fun AddArea(navController: NavController) {
 
         var imageBitmap by remember{ mutableStateOf<Bitmap?>(null)}
 
+        // Camera Permission
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
@@ -117,6 +118,7 @@ fun AddArea(navController: NavController) {
             }
         }
 
+        // Camera Launcher
         val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.TakePicture()
         ) { isSuccessful: Boolean ->
@@ -141,6 +143,7 @@ fun AddArea(navController: NavController) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // Akan menampilkan gambar kalau data gambar sudah di masukkan
         imageBitmap?.let { imageBitmap ->
             Image(
                 painter = rememberAsyncImagePainter(imageBitmap),
@@ -152,6 +155,7 @@ fun AddArea(navController: NavController) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // gallery launcher
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
             onResult = { result: Uri? ->
@@ -182,6 +186,7 @@ fun AddArea(navController: NavController) {
         ) {
             FloatingActionButton(
                 containerColor = Color.White,
+                // checking Permission for accesing native feature
                 onClick = {
                     if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                         val hasPermission = ContextCompat.checkSelfPermission(
@@ -241,6 +246,7 @@ fun AddArea(navController: NavController) {
                 ) {
                     navController.navigate(Screen.HomeScreen.route)
                     // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
+                    // Upload the data that has been filled to database using this func
                     uploadToDb(nama, lokasi, deskripsi, imageUri, navController)
                 }
             }

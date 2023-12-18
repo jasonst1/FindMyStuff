@@ -37,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -183,6 +182,7 @@ fun Conversation(viewModel: AuthViewModel?, messages: List<ItemMessage>, navCont
                     val currentSession by roleViewModel!!.currentSession.collectAsState()
 
                     // Display data from the observed 'currentSession' in your UI
+                    // If user just show home & history, Admin show CRUD system
                     currentSession?.let { session ->
                         MessageCard(message, navController, session.role)
                     }
@@ -197,6 +197,7 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
     val context = LocalContext.current
     Log.d("Image URL", itemMessage.gambar)
 
+    // This is showing the content that will be display on recycler view
     Column(
         modifier = Modifier
             .padding(end = 8.dp, start = 8.dp)
@@ -254,18 +255,22 @@ fun MessageCard(itemMessage: ItemMessage, navController: NavController, userRole
             horizontalArrangement = Arrangement.Center
         ) {
             if (userRole == "1") {
+                // Tombol untuk Edit
                 Column {
                     PrimaryTextButton(
                         text = stringResource(id = R.string.editButton),
+                        // If admin on click in this button, the id of list will be pass to edit page
                         onClick = {
                             navController.navigate("${Screen.EditScreen.route}/${itemMessage.id}")
                         }
                     )
                 }
+                // Tombol untuk Klaim
                 Column {
                     GreenTextButton(
                         text = stringResource(id = R.string.deleteButton)
                     ) {
+                        // If admin on click in this button, the id of list will be pass to klaim page
                         navController.navigate("${Screen.DeleteScreen.route}/${itemMessage.id}")
                     }
                 }
