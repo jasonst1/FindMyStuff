@@ -114,6 +114,7 @@ fun AddArea(navController: NavController) {
             }
         }
 
+        // Camera Permission
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
@@ -127,6 +128,17 @@ fun AddArea(navController: NavController) {
             }
         }
 
+        // Camera Launcher
+        val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicture()
+        ) { isSuccessful: Boolean ->
+            if (isSuccessful) {
+                imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+            } else {
+                println("Image capture canceled or unsuccessful")
+            }
+        }
+
         Spacer(modifier = Modifier.height(30.dp))
         
         Text(
@@ -135,12 +147,12 @@ fun AddArea(navController: NavController) {
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
-//                color = warnaUMN
             )
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // Akan menampilkan gambar kalau data gambar sudah di masukkan
         imageBitmap?.let { imageBitmap ->
             Image(
                 painter = rememberAsyncImagePainter(imageBitmap),
@@ -152,6 +164,7 @@ fun AddArea(navController: NavController) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // gallery launcher
         val galleryLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
             onResult = { result: Uri? ->
@@ -182,6 +195,7 @@ fun AddArea(navController: NavController) {
         ) {
             FloatingActionButton(
                 containerColor = Color.White,
+                // checking Permission for accesing native feature
                 onClick = {
                     if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                         val hasPermission = ContextCompat.checkSelfPermission(
@@ -241,6 +255,7 @@ fun AddArea(navController: NavController) {
                 ) {
                     navController.navigate(Screen.HomeScreen.route)
                     // ERROR HANDLING FOR EMPTY INPUTFIELD.NAME
+                    // Upload the data that has been filled to database using this func
                     uploadToDb(nama, lokasi, deskripsi, imageUri, navController)
                 }
             }

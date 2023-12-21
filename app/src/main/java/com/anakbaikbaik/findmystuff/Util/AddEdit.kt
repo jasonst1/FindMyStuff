@@ -47,6 +47,7 @@ fun editToDb(nama : String, lokasi : String, deskripsi : String, image: ImageDat
             ref.putFile(uri).addOnSuccessListener { taskSnapshot ->
                 ref.downloadUrl.addOnSuccessListener { uri ->
                     downloadUrl = uri.toString()
+                    // Passing value ke function updateFirestore
                     updateFirestore(nama, lokasi, deskripsi, downloadUrl, navController, itemId)
                 }
             }.addOnFailureListener { exception ->
@@ -71,6 +72,7 @@ fun updateFirestore(nama : String, lokasi : String, deskripsi : String, image: S
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
     val current = LocalDateTime.now().format(formatter)
 
+    // Assigning itemData to variable on database
     val itemData = hashMapOf(
         "nama" to nama,
         "lokasi" to lokasi,
@@ -80,6 +82,7 @@ fun updateFirestore(nama : String, lokasi : String, deskripsi : String, image: S
         "tanggal" to current
     )
 
+    // Store the data to database
     db.collection("items").document(itemId!!).set(itemData).addOnSuccessListener {
         navController.navigate(Screen.HomeScreen.route)
     }.addOnFailureListener {
@@ -124,6 +127,7 @@ fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Ur
                         ref.downloadUrl.addOnSuccessListener { uri->
                             downloadUrl = uri.toString()
                             // Membuat objek data
+                            // Assigning value that passed from addScreen to database
                             val itemData = hashMapOf(
                                 "nama" to nama,
                                 "lokasi" to lokasi,
@@ -133,7 +137,7 @@ fun uploadToDb(nama : String, lokasi : String, deskripsi : String, imageUri : Ur
                                 "tanggal" to current
                             )
 
-                            // Menambahkan data ke koleksi "items"
+                            // Menambahkan data ke koleksi "items" in database
                             db.collection("items")
                                 .add(itemData)
                                 .addOnSuccessListener {
