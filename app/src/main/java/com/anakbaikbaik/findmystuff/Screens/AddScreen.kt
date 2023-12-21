@@ -137,7 +137,6 @@ fun AddArea(navController: NavController) {
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
-//                color = warnaUMN
             )
         )
 
