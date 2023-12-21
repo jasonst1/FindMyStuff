@@ -168,7 +168,6 @@ fun EditArea(navController: NavController, itemId: String?) {
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
-//                color = warnaUMN
             )
         )
 

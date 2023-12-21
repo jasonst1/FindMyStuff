@@ -100,7 +100,6 @@ fun DeleteArea(navController: NavController, itemId: String?) {
     ) {
         var pengambil by remember { mutableStateOf("") }
         var nim by remember { mutableStateOf("") }
-//        var deskripsi by remember { mutableStateOf("") }
         var imageUri by remember { mutableStateOf<Uri?>(null) }
         val context = LocalContext.current
 
@@ -163,9 +162,6 @@ fun DeleteArea(navController: NavController, itemId: String?) {
                 imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
             }
         )
-//        if (itemId != null) {
-//            Text(text = itemId)
-//        }
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -180,11 +176,6 @@ fun DeleteArea(navController: NavController, itemId: String?) {
             label = { Text("Nomor Induk Mahasiswa") }
         )
 
-//        OutlinedTextField(
-//            value = deskripsi,
-//            onValueChange = { value -> deskripsi = value },
-//            label = { Text("Deskripsi") }
-//        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()

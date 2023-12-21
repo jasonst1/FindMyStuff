@@ -26,7 +26,6 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         FirebaseApp.initializeApp(this)
-//        val db = FirebaseFirestore.getInstance()
         super.onCreate(savedInstanceState)
         setContent {
             window.statusBarColor = getColor(R.color.warnaUMN)

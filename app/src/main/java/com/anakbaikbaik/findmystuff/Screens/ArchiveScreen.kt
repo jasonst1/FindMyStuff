@@ -124,21 +124,6 @@ fun calling(viewModel: AuthViewModel?, messages: List<ItemMessage>, navControlle
     ) {
         items(messages) { message ->
             MessageCardArchive(message, navController)
-            // Display user information
-//            viewModel?.currentUser?.let { user ->
-//                Text("Username: ${user.displayName ?: "N/A"}")
-//                Text("Email: ${user.email ?: "N/A"}")
-//            }
-//            Button(
-//                onClick = {
-//                    viewModel?.logout()
-//                    navController.navigate(Screen.LandingScreen.route) {
-//                        popUpTo(Screen.LandingScreen.route) { inclusive = true }
-//                    }
-//                }
-//            ){
-//                Text(text = "Logout")
-//            }
         }
     }
 }

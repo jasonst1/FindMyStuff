@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -65,7 +64,6 @@ import com.anakbaikbaik.findmystuff.ui.theme.RedTextButton
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun AddScreen(viewModel: AuthViewModel?, navController: NavController, roleViewModel: RoleViewModel?) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -137,7 +135,6 @@ fun AddArea(navController: NavController) {
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
-//                color = warnaUMN
             )
         )
 
