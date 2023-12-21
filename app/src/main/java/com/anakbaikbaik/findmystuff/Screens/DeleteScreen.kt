@@ -54,7 +54,6 @@ import com.anakbaikbaik.findmystuff.NavBars.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.Util.getCapturedImageUri
-import com.anakbaikbaik.findmystuff.Util.launchCamera
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
 import com.anakbaikbaik.findmystuff.ui.theme.GreenTextButton
@@ -105,13 +104,23 @@ fun DeleteArea(navController: NavController, itemId: String?) {
 
         var imageBitmap by remember{ mutableStateOf<Bitmap?>(null)}
 
-        // Camera permission
+        val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicture()
+        ) { isSuccessful: Boolean ->
+            if (isSuccessful) {
+                imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+            } else {
+                println("Image capture canceled or unsuccessful")
+            }
+        }
+
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
                 // Permission granted, launch camera
-                launchCamera(context)
+                imageUri = getCapturedImageUri(context)
+                cameraLauncher.launch(imageUri)
             } else {
                 // Permission denied, handle accordingly
                 println("Camera permission denied")

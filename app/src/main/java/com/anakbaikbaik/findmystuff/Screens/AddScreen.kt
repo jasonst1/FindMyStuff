@@ -55,7 +55,6 @@ import com.anakbaikbaik.findmystuff.NavBars.TopBarWithLogout
 import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.Util.getCapturedImageUri
-import com.anakbaikbaik.findmystuff.Util.launchCamera
 import com.anakbaikbaik.findmystuff.Util.uploadToDb
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
@@ -105,13 +104,24 @@ fun AddArea(navController: NavController) {
 
         var imageBitmap by remember{ mutableStateOf<Bitmap?>(null)}
 
+        val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicture()
+        ) { isSuccessful: Boolean ->
+            if (isSuccessful) {
+                imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+            } else {
+                println("Image capture canceled or unsuccessful")
+            }
+        }
+
         // Camera Permission
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
                 // Permission granted, launch camera
-                launchCamera(context)
+                imageUri = getCapturedImageUri(context)
+                cameraLauncher.launch(imageUri)
             } else {
                 // Permission denied, handle accordingly
                 println("Camera permission denied")

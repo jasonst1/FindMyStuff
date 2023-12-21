@@ -167,11 +167,3 @@ fun getCapturedImageUri(context: Context): Uri? {
 
     return context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 }
-
-fun launchCamera(context: Context) {
-    try {
-        // Start the camera activity using the photoUri
-    } catch (e: Exception) {
-        println("Error launching camera: ${e.message}")
-    }
-}

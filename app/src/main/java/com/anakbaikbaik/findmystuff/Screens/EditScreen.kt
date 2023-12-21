@@ -59,7 +59,6 @@ import com.anakbaikbaik.findmystuff.Navigation.Screen
 import com.anakbaikbaik.findmystuff.R
 import com.anakbaikbaik.findmystuff.Util.editToDb
 import com.anakbaikbaik.findmystuff.Util.getCapturedImageUri
-import com.anakbaikbaik.findmystuff.Util.launchCamera
 import com.anakbaikbaik.findmystuff.Util.retrieveData
 import com.anakbaikbaik.findmystuff.ViewModel.AuthViewModel
 import com.anakbaikbaik.findmystuff.ViewModel.RoleViewModel
@@ -157,6 +156,19 @@ fun EditArea(navController: NavController, itemId: String?) {
                 isPhotoChanged = true
             } else {
                 println("Image capture canceled or unsuccessful")
+            }
+        }
+
+        val cameraPermissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted, launch camera
+                imageUri = getCapturedImageUri(context)
+                cameraLauncher.launch(imageUri)
+            } else {
+                // Permission denied, handle accordingly
+                println("Camera permission denied")
             }
         }
 
