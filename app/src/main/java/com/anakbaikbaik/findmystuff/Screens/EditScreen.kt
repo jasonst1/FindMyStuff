@@ -134,19 +134,6 @@ fun EditArea(navController: NavController, itemId: String?) {
             }
         }
 
-        // Camera Permission
-        val cameraPermissionLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission granted, launch camera
-                launchCamera(context)
-            } else {
-                // Permission denied, handle accordingly
-                println("Camera permission denied")
-            }
-        }
-
         // Camera Launcher
         val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.TakePicture()
@@ -159,6 +146,7 @@ fun EditArea(navController: NavController, itemId: String?) {
             }
         }
 
+        // Camera Permission
         val cameraPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->

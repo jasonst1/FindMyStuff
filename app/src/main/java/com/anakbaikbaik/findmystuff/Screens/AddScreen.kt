@@ -104,6 +104,7 @@ fun AddArea(navController: NavController) {
 
         var imageBitmap by remember{ mutableStateOf<Bitmap?>(null)}
 
+        // Camera Launcher
         val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.TakePicture()
         ) { isSuccessful: Boolean ->
@@ -125,17 +126,6 @@ fun AddArea(navController: NavController) {
             } else {
                 // Permission denied, handle accordingly
                 println("Camera permission denied")
-            }
-        }
-
-        // Camera Launcher
-        val cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean> = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.TakePicture()
-        ) { isSuccessful: Boolean ->
-            if (isSuccessful) {
-                imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
-            } else {
-                println("Image capture canceled or unsuccessful")
             }
         }
 
